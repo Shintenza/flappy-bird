@@ -1,22 +1,31 @@
 #include "include/Game.hpp"
+#include "include/GameState.hpp"
+#include "include/Player.hpp"
+#include <iostream>
 
+void Game::initState () {
+    states.push(new GameState(window));
+}
 void Game::initVariables() {
     windowMode = sf::VideoMode(800,600);
-    gameEnded = false;
     isOpen = true;
-    player = new Player();
 }
+
 void Game::initWindow() {
     window = new sf::RenderWindow(windowMode, "Flappy Bird");
     window->setFramerateLimit(60);
     window->setVerticalSyncEnabled(false);
-}
+};
 Game::Game() {
     initVariables();
     initWindow();
+    initState();
 }
 Game::~Game() {
-    delete player;
+    delete window;
+}
+void Game::updateDt(){
+    dt = dtClock.restart().asSeconds();
 }
 void Game::updatePollEvenets() {
     while(window->pollEvent(event)) {
@@ -26,14 +35,25 @@ void Game::updatePollEvenets() {
         }
     }
 }
+void Game::inputUpdate() {
+}
 bool Game::isWindowOpen() const {
     return isOpen;
 }
+sf::Vector2u Game::getWindowSize() const {
+    return window->getSize();
+}
 void Game::update(){
     updatePollEvenets();
+    if(states.size()>0) {
+        states.top()->update(dt);
+    }
 }
 void Game::render(){
-    window->clear(sf::Color::Black);
-    window->draw(player->getSprite());
+    window->clear();
+
+    if (states.size() > 0) {
+        states.top()->render(window);
+    }
     window->display();
 }
