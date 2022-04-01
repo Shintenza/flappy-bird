@@ -10,6 +10,10 @@ private:
     sf::Texture backgroundTexture;
     sf::Sprite backgroundSprite[2];
     sf::RectangleShape collision_box;
+
+    std::vector<Entity*> entities;
+
+    bool isHeld;
     int backgroundYOffset;
     void loadBackground();
     void moveBackground();

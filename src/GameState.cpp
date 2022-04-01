@@ -40,8 +40,10 @@ GameState::GameState(sf::RenderWindow* window) : State(window) {
         std::cout<<"Player texture not found"<<std::endl;
     }
     player = new Player(texture);
+    entities.push_back(player);
     loadBackground();
     initCollisionBox();
+    isHeld = false;
 };
 
 void GameState::handleInput(const float& dt) {  
@@ -49,19 +51,24 @@ void GameState::handleInput(const float& dt) {
         std::cout<<"Game state finished"<<std::endl;
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        player->move(dt, 0, -5);
+        player->move( 0, -5);
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        player->move(dt, -5, 0);
+        player->move(-5, 0);
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-        player->move(dt, 0, 5);
+        player->move(0, 5);
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        player->move(dt, 5, 0);
+        player->move(5, 0);
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-        player->flap(dt);
+        if (!isHeld) {
+            isHeld = true;
+            player->flap(dt);
+        }
+    } else {
+        isHeld = false;
     }
 }
 
@@ -69,13 +76,21 @@ void GameState::update(const float& dt) {
     moveBackground();
     player->update(dt);
     handleInput(dt);
-    if (collision_box.getGlobalBounds().intersects(player->getBouding())) {
-        std::cout<<"dead"<<std::endl;
+
+    for (int i = 0; i< entities.size(); i++) {
+        if (entities.at(i)->checkIfDead(collision_box)) {
+            entities.erase(entities.begin()+i);
+        }
     }
 }
+
 void GameState::render(sf::RenderTarget* window) {
     window->draw(backgroundSprite[0]);
     window->draw(backgroundSprite[1]);
-    window->draw(collision_box);
-    player->render(window);
+
+    if (entities.size() > 0) {
+        for (Entity *e : entities) {
+            e->render(window);
+        }
+    }
 }

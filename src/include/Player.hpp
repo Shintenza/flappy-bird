@@ -1,23 +1,21 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Entity.hpp"
 
-class Player {
+class Player : public Entity{ 
 private:
-    sf::Vector2f position;
-    sf::Sprite sprite;
-    sf::Texture texture;
-    float speed;
-    bool isDead;
-
-    void setSprite(sf::Texture *texture);
+    float flapHeight;
+    void setSprite(sf::Texture* texturePtr);
     void fall(const float& dt);
+
+    sf::Vector2f velocity;
 public:
     Player(sf::Texture *texture);
-    void move(const float& dt, int x, int y);
-    void flap(const float& dt);
-    bool checkIfDead (sf::RectangleShape& collision_box);
-    sf::FloatRect getBouding() const;
 
+    void move(float x, float y);
+    void flap(const float& dt);
+
+    bool checkIfDead (sf::RectangleShape collision_box);
     void update(const float& dt);
     void render(sf::RenderTarget* window);
 };
