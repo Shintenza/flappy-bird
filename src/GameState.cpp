@@ -1,8 +1,20 @@
 #include "include/GameState.hpp"
 #include <iostream>
 
+// TODO write better path handler
+#define FONT_PATH "./assets/font1.ttf"
+#define BACKGROUND_PATH "./assets/background.png"
+
+void GameState::loadFonts() {
+    if (!font.loadFromFile(FONT_PATH)) {
+        std::cout<<"Failed to load font1"<<std::endl;
+        exit(1);
+    }
+    text.setFont(font);
+}
+
 void GameState::loadBackground() {
-    if(!backgroundTexture.loadFromFile("./assets/background.png")) {
+    if(!backgroundTexture.loadFromFile(BACKGROUND_PATH)) {
         std::cout<<"Failed to load background texture"<<std::endl;
         exit(1);
     }
@@ -33,17 +45,42 @@ void GameState::initCollisionBox() {
     collision_box.setPosition(0, getWindow()->getSize().y - offsetY);
 }
 
+sf::Text GameState::getStartText() {
+    text.setCharacterSize(69);
+    text.setString("Tap space to start playing");
+
+    unsigned yPos = 0.25 * getWindow()->getSize().y;
+    unsigned xPos = 0.5  * getWindow()->getSize().x - (text.getGlobalBounds().width / 2);
+
+    text.setPosition(xPos, yPos);
+
+    return text;
+}
+sf::Text GameState::getEndingText() {
+    text.setCharacterSize(69);
+    text.setString("Game Over");
+
+    unsigned yPos = 0.5  * getWindow()->getSize().y - (text.getGlobalBounds().height /2);
+    unsigned xPos = 0.5  * getWindow()->getSize().x - (text.getGlobalBounds().width / 2);
+
+    text.setPosition(xPos, yPos);
+
+    return text;
+}
 GameState::GameState(sf::RenderWindow* window) : State(window) {
     loadTexture("PLAYER", "./assets/bird.png");
     sf::Texture *texture = getTexture("PLAYER");
     if (!texture) {
         std::cout<<"Player texture not found"<<std::endl;
     }
-    player = new Player(texture);
+    player = new Player(texture, getWindow()->getSize());
     entities.push_back(player);
+    loadFonts();
     loadBackground();
     initCollisionBox();
     isHeld = false;
+    gameEnded = false;
+    sentStartingMessage = false;
 };
 
 void GameState::handleInput(const float& dt) {  
@@ -63,9 +100,14 @@ void GameState::handleInput(const float& dt) {
         player->move(5, 0);
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-        if (!isHeld) {
-            isHeld = true;
-            player->flap(dt);
+        if (!player->checkIfActive() && !sentStartingMessage) {
+            sentStartingMessage = true;
+            player->startFalling();
+        } else {
+            if (!isHeld) {
+                isHeld = true;
+                player->flap(dt);
+            }
         }
     } else {
         isHeld = false;
@@ -74,12 +116,15 @@ void GameState::handleInput(const float& dt) {
 
 void GameState::update(const float& dt) {
     moveBackground();
-    player->update(dt);
     handleInput(dt);
 
-    for (int i = 0; i< entities.size(); i++) {
+    for (int i = 0; i < entities.size(); i++) {
         if (entities.at(i)->checkIfDead(collision_box)) {
+            gameEnded = true;
             entities.erase(entities.begin()+i);
+            delete entities[i];
+        } else {
+            entities.at(i)->update(dt);
         }
     }
 }
@@ -87,6 +132,13 @@ void GameState::update(const float& dt) {
 void GameState::render(sf::RenderTarget* window) {
     window->draw(backgroundSprite[0]);
     window->draw(backgroundSprite[1]);
+
+    if (!sentStartingMessage) {
+        window->draw(getStartText());
+    }
+    if (gameEnded) {
+        window->draw(getEndingText());
+    }
 
     if (entities.size() > 0) {
         for (Entity *e : entities) {

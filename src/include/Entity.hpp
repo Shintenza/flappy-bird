@@ -8,7 +8,8 @@ protected:
     float speed;
 public:
     Entity(float speed);
-
+    //TODO destructor;
+    virtual ~Entity();
     sf::FloatRect getBounding() const;
     sf::Sprite getSprite() const;
     
