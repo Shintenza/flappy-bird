@@ -9,6 +9,7 @@ private:
     void setSprite(sf::Texture* texturePtr);
     void fall(const float& dt);
     float angle;
+    bool isFlying;
 
     sf::Vector2u windowSize;
     sf::Vector2f velocity;

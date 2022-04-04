@@ -25,16 +25,7 @@ void Player::startFalling() {
     isFalling = true;
 }
 void Player::fall(const float& dt) {
-    if (velocity.y > 80)  {
-        if (sprite.getRotation() < 90.f) {
-            angle+=80.f;
-        }
-    } else {
-        if (isFalling) {
-            angle=0;
-        }
-    }
-
+    
     if (isFalling) {
         velocity.y += 981.f *dt;
     }
@@ -59,6 +50,7 @@ bool Player::checkIfDead(sf::RectangleShape collision_box) {
 void Player::flap(const float& dt) {
     if (isFalling) {
         velocity.y = -sqrtf(2.0f * 981.f *flapHeight);
+        angle = -20.f;
     }
 }
 void Player::setSprite(sf::Texture *texture) {
@@ -69,7 +61,14 @@ void Player::setSprite(sf::Texture *texture) {
 void Player::update(const float& dt) {
     fall(dt);
     sprite.move(velocity*dt);
-    sprite.setRotation(angle*dt);
+    sprite.setRotation(angle);
+    
+    if (velocity.y > 0) {
+        float rotation = sprite.getRotation() > 180 ? sprite.getRotation() - 360.f : sprite.getRotation();
+        if (rotation < 90) {
+            angle += 100*dt;
+        }
+    }
 }
 void Player::render(sf::RenderTarget* window) {
     window->draw(sprite);
