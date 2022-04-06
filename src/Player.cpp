@@ -39,7 +39,6 @@ void Player::stopFalling() {
     velocity.x = -400;
 }
 void Player::fall(const float& dt) {
-    
     if (isFalling) {
         velocity.y += 981.f *dt;
     }
@@ -77,11 +76,16 @@ void Player::setSprite(sf::Texture *texture) {
 
 void Player::update(const float& dt) {
     fall(dt);
+
+    if (sprite.getPosition().y < 0) {
+        velocity.y = 50;
+    }
     sprite.move(velocity*dt);
     sprite.setRotation(angle);
     
 
     hitboxHandler();
+
     
     if (velocity.y > 0) {
         float rotation = sprite.getRotation() > 180 ? sprite.getRotation() - 360.f : sprite.getRotation();
