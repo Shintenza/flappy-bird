@@ -5,15 +5,25 @@
 Player::Player(sf::Texture *texture, sf::Vector2u _windowSize) : Entity(40) {
     windowSize = _windowSize;
     setSprite(texture);
-    flapHeight = 100.f;
+    flapHeight = 70.f;
     isFalling = false;
 
     unsigned xPos = 0.3 * windowSize.x - (sprite.getGlobalBounds().width / 2);
     unsigned yPos = 0.5 * windowSize.y - (sprite.getGlobalBounds().height / 2);
     sprite.setPosition(xPos, yPos);
+
+    size.x = sprite.getGlobalBounds().width;
+    size.y = sprite.getGlobalBounds().height;
 }
+
 Player::~Player() {
     std::cout<<"dead"<<std::endl;
+}
+
+void Player::hitboxHandler() {
+    hitbox.setSize(size);
+    hitbox.setPosition(sprite.getPosition().x, sprite.getPosition().y);
+    hitbox.setFillColor(sf::Color::Blue);
 }
 
 
@@ -24,6 +34,10 @@ void Player::move(float x, float y) {
 void Player::startFalling() {
     isFalling = true;
 }
+void Player::stopFalling() {
+    isFalling = false;
+    velocity.x = -400;
+}
 void Player::fall(const float& dt) {
     
     if (isFalling) {
@@ -31,6 +45,9 @@ void Player::fall(const float& dt) {
     }
 }
 
+sf::FloatRect Player::getHitboxBounding() {
+    return hitbox.getGlobalBounds();
+}
 bool Player::checkIfActive() {
     return isFalling;
 }
@@ -50,7 +67,7 @@ bool Player::checkIfDead(sf::RectangleShape collision_box) {
 void Player::flap(const float& dt) {
     if (isFalling) {
         velocity.y = -sqrtf(2.0f * 981.f *flapHeight);
-        angle = -20.f;
+        angle = -10.f;
     }
 }
 void Player::setSprite(sf::Texture *texture) {
@@ -62,6 +79,9 @@ void Player::update(const float& dt) {
     fall(dt);
     sprite.move(velocity*dt);
     sprite.setRotation(angle);
+    
+
+    hitboxHandler();
     
     if (velocity.y > 0) {
         float rotation = sprite.getRotation() > 180 ? sprite.getRotation() - 360.f : sprite.getRotation();

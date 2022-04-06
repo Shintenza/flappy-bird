@@ -1,8 +1,8 @@
-#ifndef GAME_HPP
-#define GAME_HPP
+#pragma once
 
-#include "State.hpp"
 #include "Player.hpp"
+#include "State.hpp"
+#include "Obstacle.hpp"
 
 class GameState : public State {
 private:
@@ -13,18 +13,27 @@ private:
     sf::RectangleShape collision_box;
     sf::Font font;
     sf::Text text;
+    sf::Clock gameClock;
 
-    std::vector<Entity*> entities;
+    std::vector<Obstacle*> entities;
 
     bool isHeld;
     bool gameEnded;
     bool sentStartingMessage;
+    bool readyToSpawnObstacle;
+    float groundHeight;
+    float distance;
+    float backgroundMoveSpeed;
+
     int backgroundYOffset;
+    int score;
 
     void loadFonts();
     void loadBackground();
-    void moveBackground();
+    void moveBackground(const float& dt);
     void initCollisionBox();
+    void spawnObstacles();
+    void setScore();
 
     sf::Text getStartText();
     sf::Text getEndingText();
@@ -34,4 +43,3 @@ public:
     void update(const float& dt);
     void render(sf::RenderTarget* target);
 };
-#endif

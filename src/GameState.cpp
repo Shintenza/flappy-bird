@@ -1,4 +1,5 @@
 #include "include/GameState.hpp"
+
 #include <iostream>
 
 // TODO write better path handler
@@ -25,7 +26,7 @@ void GameState::loadBackground() {
     backgroundSprite[0].setPosition(0, -backgroundYOffset);
     backgroundSprite[1].setPosition(backgroundTexture.getSize().x, -backgroundYOffset);
 }
-void GameState::moveBackground() {
+void GameState::moveBackground(const float& dt) {
     int bgTextureSize = backgroundTexture.getSize().x;
     
     if (std::abs(backgroundSprite[0].getPosition().x) > bgTextureSize) {
@@ -36,17 +37,39 @@ void GameState::moveBackground() {
         backgroundSprite[1].setPosition(backgroundSprite[0].getPosition().x + bgTextureSize, -backgroundYOffset );
     }
 
-    backgroundSprite[0].move(-5.f, 0);
-    backgroundSprite[1].move(-5.f, 0);
+    backgroundSprite[0].move(-backgroundMoveSpeed*dt, 0);
+    backgroundSprite[1].move(-backgroundMoveSpeed*dt, 0);
 }
 void GameState::initCollisionBox() {
-    int offsetY = 75;
-    collision_box.setSize(sf::Vector2f(getWindow()->getSize().x, offsetY));
-    collision_box.setPosition(0, getWindow()->getSize().y - offsetY);
+    collision_box.setSize(sf::Vector2f(getWindow()->getSize().x, groundHeight));
+    collision_box.setPosition(0, getWindow()->getSize().y - groundHeight);
+}
+
+void GameState::spawnObstacles() {
+    Obstacle *new_obstacle = new Obstacle(getTexture("OBSTACLE"), getWindow()->getSize(), groundHeight, backgroundMoveSpeed);
+
+    if (entities.empty() && gameClock.getElapsedTime().asSeconds() > 4 && !gameEnded && sentStartingMessage) {
+        readyToSpawnObstacle = true;
+    } else if (entities.size() > 0 && distance < getWindow()->getSize().x - entities.back()->getPosition().x && !gameEnded) {
+        readyToSpawnObstacle = true;
+    }
+    if (readyToSpawnObstacle) {
+        entities.push_back(new_obstacle);
+        readyToSpawnObstacle = false;
+    }
+}
+
+void GameState::setScore() {
+    if (!entities.empty() 
+        && player->getSprite().getPosition().x > (entities.front()->getPosition().x + entities.front()->getBounding().width ) 
+        && !entities.front()->checkIfPassed()) {
+            score+=1;         
+            entities.front()->pass();
+    }
 }
 
 sf::Text GameState::getStartText() {
-    text.setCharacterSize(69);
+    text.setCharacterSize(40);
     text.setString("Tap space to start playing");
 
     unsigned yPos = 0.25 * getWindow()->getSize().y;
@@ -69,40 +92,41 @@ sf::Text GameState::getEndingText() {
 }
 GameState::GameState(sf::RenderWindow* window) : State(window) {
     loadTexture("PLAYER", "./assets/bird.png");
-    sf::Texture *texture = getTexture("PLAYER");
-    if (!texture) {
-        std::cout<<"Player texture not found"<<std::endl;
+
+    sf::Texture *player_texture = getTexture("PLAYER");
+
+    player = new Player(player_texture, getWindow()->getSize());
+    loadTexture("OBSTACLE", "./assets/column.png");
+    sf::Texture *obstacle_texture = getTexture("OBSTACLE");
+
+    if (!player_texture || !obstacle_texture) {
+        std::cout<<"Player or obstacle texture not found"<<std::endl;
     }
-    player = new Player(texture, getWindow()->getSize());
-    entities.push_back(player);
-    loadFonts();
-    loadBackground();
-    initCollisionBox();
+
     isHeld = false;
     gameEnded = false;
     sentStartingMessage = false;
+    readyToSpawnObstacle = false;
+    groundHeight = 75;
+    backgroundMoveSpeed = 300.f;
+    distance = 300.f;
+    score = 0;
+
+
+    loadFonts();
+    loadBackground();
+    initCollisionBox();
 };
 
 void GameState::handleInput(const float& dt) {  
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
         std::cout<<"Game state finished"<<std::endl;
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        player->move( 0, -5);
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        player->move(-5, 0);
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-        player->move(0, 5);
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        player->move(5, 0);
-    }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
         if (!player->checkIfActive() && !sentStartingMessage) {
             sentStartingMessage = true;
             player->startFalling();
+            gameClock.restart();
         } else {
             if (!isHeld) {
                 isHeld = true;
@@ -115,18 +139,30 @@ void GameState::handleInput(const float& dt) {
 }
 
 void GameState::update(const float& dt) {
-    moveBackground();
+    moveBackground(dt);
     handleInput(dt);
 
-    for (int i = 0; i < entities.size(); i++) {
-        if (entities.at(i)->checkIfDead(collision_box)) {
-            gameEnded = true;
-            entities.erase(entities.begin()+i);
-            delete entities[i];
+    if (player->checkIfDead(collision_box)) {
+        gameEnded = true;
+    } else {
+        player->update(dt);
+    }
+    for (unsigned i = 0; i <entities.size(); i++) {
+        if (entities.at(0)->checkIfDead(collision_box)) {
+            delete entities[0];
+            entities.erase(entities.begin());
         } else {
             entities.at(i)->update(dt);
         }
     }
+    spawnObstacles();
+
+    if (entities.size()>0) {
+        if (entities.at(0)->isColliding(player->getHitboxBounding())){
+            player->stopFalling();
+        }
+    }
+    setScore();
 }
 
 void GameState::render(sf::RenderTarget* window) {
@@ -136,13 +172,15 @@ void GameState::render(sf::RenderTarget* window) {
     if (!sentStartingMessage) {
         window->draw(getStartText());
     }
-    if (gameEnded) {
-        window->draw(getEndingText());
-    }
-
-    if (entities.size() > 0) {
+    if (entities.size() > 0 ) {
         for (Entity *e : entities) {
             e->render(window);
         }
     }
+    if (gameEnded) {
+        window->draw(getEndingText());
+    } else {
+        player->render(window);
+    }
+
 }

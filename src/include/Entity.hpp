@@ -13,6 +13,8 @@ public:
     sf::FloatRect getBounding() const;
     sf::Sprite getSprite() const;
     
+    bool isColliding(sf::FloatRect player);
+
     virtual void setSprite(sf::Texture* texturePtr) = 0;
     virtual bool checkIfDead(sf::RectangleShape object) = 0;
     virtual void update(const float& dt) = 0;

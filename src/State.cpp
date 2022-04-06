@@ -23,5 +23,6 @@ sf::Texture* State::getTexture(std::string name) {
     if (textures.find(name)!=textures.end()) {
         return textures.find(name)->second;
     }
+    std::cout<<"Texture not found"<<std::endl;
     return NULL;
 }
