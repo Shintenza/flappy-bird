@@ -37,6 +37,7 @@ private:
 
     sf::Text getStartText();
     sf::Text getEndingText();
+    sf::Text getScoreText();
 public:
     GameState(sf::RenderWindow* window);
     void handleInput(const float& dt);

@@ -90,6 +90,16 @@ sf::Text GameState::getEndingText() {
 
     return text;
 }
+sf::Text GameState::getScoreText() {
+    text.setCharacterSize(69);
+    text.setString(std::to_string(score));
+
+    unsigned yPos = 0.2  * getWindow()->getSize().y - (text.getGlobalBounds().height /2);
+    unsigned xPos = 0.5  * getWindow()->getSize().x - (text.getGlobalBounds().width / 2);
+
+    text.setPosition(xPos, yPos);
+    return text;
+}
 GameState::GameState(sf::RenderWindow* window) : State(window) {
     loadTexture("PLAYER", "./assets/bird.png");
 
@@ -171,6 +181,9 @@ void GameState::render(sf::RenderTarget* window) {
 
     if (!sentStartingMessage) {
         window->draw(getStartText());
+    }
+    if (sentStartingMessage) {
+        window->draw(getScoreText());
     }
     if (entities.size() > 0 ) {
         for (Entity *e : entities) {
