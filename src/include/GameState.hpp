@@ -28,8 +28,8 @@ private:
     int backgroundYOffset;
     int score;
 
-    void loadFonts();
-    void loadBackground();
+    void loadFonts(std::string assetFolderPath);
+    void loadBackground(std::string assetFolderPath);
     void moveBackground(const float& dt);
     void initCollisionBox();
     void spawnObstacles();
@@ -39,7 +39,7 @@ private:
     sf::Text getEndingText();
     sf::Text getScoreText();
 public:
-    GameState(sf::RenderWindow* window);
+    GameState(sf::RenderWindow* window, std::string assetFolderPath);
     void handleInput(const float& dt);
     void update(const float& dt);
     void render(sf::RenderTarget* target);

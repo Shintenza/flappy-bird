@@ -1,21 +1,16 @@
 #include "include/GameState.hpp"
-
 #include <iostream>
 
-// TODO write better path handler
-#define FONT_PATH "./assets/font1.ttf"
-#define BACKGROUND_PATH "./assets/background.png"
-
-void GameState::loadFonts() {
-    if (!font.loadFromFile(FONT_PATH)) {
+void GameState::loadFonts(std::string assetsFolderPath) {
+    if (!font.loadFromFile(assetsFolderPath+"font1.ttf")) {
         std::cout<<"Failed to load font1"<<std::endl;
         exit(1);
     }
     text.setFont(font);
 }
 
-void GameState::loadBackground() {
-    if(!backgroundTexture.loadFromFile(BACKGROUND_PATH)) {
+void GameState::loadBackground(std::string assetsFolderPath) {
+    if(!backgroundTexture.loadFromFile(assetsFolderPath+"background.png")) {
         std::cout<<"Failed to load background texture"<<std::endl;
         exit(1);
     }
@@ -100,13 +95,13 @@ sf::Text GameState::getScoreText() {
     text.setPosition(xPos, yPos);
     return text;
 }
-GameState::GameState(sf::RenderWindow* window) : State(window) {
-    loadTexture("PLAYER", "./assets/bird.png");
+GameState::GameState(sf::RenderWindow* window, std::string assetsFolderPath) : State(window) {
+    loadTexture("PLAYER", assetsFolderPath+"bird.png");
 
     sf::Texture *player_texture = getTexture("PLAYER");
 
     player = new Player(player_texture, getWindow()->getSize());
-    loadTexture("OBSTACLE", "./assets/column.png");
+    loadTexture("OBSTACLE", assetsFolderPath+"column.png");
     sf::Texture *obstacle_texture = getTexture("OBSTACLE");
 
     if (!player_texture || !obstacle_texture) {
@@ -123,8 +118,8 @@ GameState::GameState(sf::RenderWindow* window) : State(window) {
     score = 0;
 
 
-    loadFonts();
-    loadBackground();
+    loadFonts(assetsFolderPath);
+    loadBackground(assetsFolderPath);
     initCollisionBox();
 };
 

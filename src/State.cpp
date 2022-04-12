@@ -3,6 +3,7 @@
 
 State::State(sf::RenderWindow* _window) {
    window = _window;
+   isActive = true;
 }
 void State::loadTexture(std::string name, std::string _path) {
     sf::Texture* texture = new sf::Texture();
@@ -25,4 +26,11 @@ sf::Texture* State::getTexture(std::string name) {
     }
     std::cout<<"Texture not found"<<std::endl;
     return NULL;
+}
+void State::endState() {
+    isActive = false;
+    std::cout<<"state finished"<<std::endl;
+}
+bool State::getState() {
+   return isActive ;
 }

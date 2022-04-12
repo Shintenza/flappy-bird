@@ -1,5 +1,8 @@
+#pragma once
+
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
+#include "MenuState.hpp"
 #include <stack>
 
 #include "State.hpp"
@@ -9,6 +12,10 @@ private:
     sf::VideoMode windowMode;
     sf::RenderWindow* window;
     sf::Event event;
+
+    std::string assetsFolderName = "assets";
+    int argc;
+    char** argv;
     
     std::stack<State*> states;
 
@@ -16,16 +23,18 @@ private:
     float dt;
 
     bool isOpen;
-
+    
     void initState();
     void initVariables();
     void initWindow();
 public:
-    Game();
+    Game(int argc, char** argv);
     ~Game();
     void updateDt();
     void updatePollEvenets();
     void inputUpdate();
+
+    std::string getAssetsPath();
 
     bool isWindowOpen() const;
     sf::Vector2u getWindowSize() const;

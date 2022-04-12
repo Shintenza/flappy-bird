@@ -5,16 +5,14 @@
 class State {
 private:
     sf::RenderWindow* window;
-    bool quit;
-    bool paused;
+    bool isActive;
     std::map<std::string, sf::Texture*> textures;
 public: 
     State(sf::RenderWindow* window);
     ~State();
 
     void endState();
-    void pauseState();
-    void resumeState();
+    bool getState();
     void loadTexture(std::string texture_name, std::string path);
     sf::RenderWindow* getWindow();
     sf::Texture* getTexture(std::string texture_name);

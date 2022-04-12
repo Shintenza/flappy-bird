@@ -1,10 +1,12 @@
 #include "include/Game.hpp"
 #include "include/GameState.hpp"
 #include "include/Player.hpp"
+#include "include/MenuState.hpp"
 #include <iostream>
 
 void Game::initState () {
-    states.push(new GameState(window));
+    /* states.push(new GameState(window, getAssetsPath())); */
+    states.push(new MenuState(window, getAssetsPath()));
 }
 void Game::initVariables() {
     windowMode = sf::VideoMode(800,600);
@@ -16,7 +18,8 @@ void Game::initWindow() {
     window->setFramerateLimit(60);
     window->setVerticalSyncEnabled(false);
 };
-Game::Game() {
+
+Game::Game(int _argc, char **_argv) : argc(_argc), argv(_argv) {
     initVariables();
     initWindow();
     initState();
@@ -37,6 +40,15 @@ void Game::updatePollEvenets() {
 }
 void Game::inputUpdate() {
 }
+
+std::string Game::getAssetsPath() {
+    std::string path = argv[0];
+    if (path.find("bin") != std::string::npos) {
+        return "./" + assetsFolderName + "/";
+    }
+    return "../" + assetsFolderName + "/";
+}
+
 bool Game::isWindowOpen() const {
     return isOpen;
 }
@@ -46,7 +58,11 @@ sf::Vector2u Game::getWindowSize() const {
 void Game::update(){
     updatePollEvenets();
     if(states.size()>0) {
-        states.top()->update(dt);
+        if (!states.top()->getState()) {
+            states.pop();
+        } else {
+            states.top()->update(dt);
+        }
     }
 }
 void Game::render(){
@@ -54,6 +70,9 @@ void Game::render(){
 
     if (states.size() > 0) {
         states.top()->render(window);
+    } else {
+        isOpen = false;
+        window->close();
     }
     window->display();
 }
