@@ -30,6 +30,7 @@ public:
     void stopFalling();
     void move(float x, float y);
     void flap(const float& dt);
+    void restartPlayer();
     sf::FloatRect getHitboxBounding();
 
     bool checkIfActive();

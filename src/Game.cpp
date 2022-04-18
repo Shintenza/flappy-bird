@@ -5,12 +5,12 @@
 #include <iostream>
 
 void Game::initState () {
-    /* states.push(new GameState(window, getAssetsPath())); */
-    states.push(new MenuState(window, getAssetsPath()));
+    states.push(new MenuState(window, getAssetsPath(), started));
 }
 void Game::initVariables() {
     windowMode = sf::VideoMode(800,600);
     isOpen = true;
+    started = false;
 }
 
 void Game::initWindow() {
@@ -57,6 +57,10 @@ sf::Vector2u Game::getWindowSize() const {
 }
 void Game::update(){
     updatePollEvenets();
+    if (started) {
+        started = false;
+        states.push(new GameState(window, getAssetsPath()));
+    }
     if(states.size()>0) {
         if (!states.top()->getState()) {
             states.pop();

@@ -1,7 +1,7 @@
 #include "include/MenuState.hpp"
 #include <iostream>
 
-MenuState::MenuState(sf::RenderWindow* _window, std::string assets_path) : State(_window){
+MenuState::MenuState(sf::RenderWindow* _window, std::string assets_path, bool& started) : State(_window), isGameStarted(started){
     init(assets_path);
     positionMenu();
 }
@@ -23,6 +23,8 @@ void MenuState::init(std::string assetsFolderPath) {
     }
     backgroundSprite.setTexture(*getTexture("BACKGROUND"));
     positionMenu();
+
+    isHeld = false;
     
 }
 void MenuState::positionMenu() {
@@ -76,9 +78,17 @@ void MenuState::handleInput(const float& dt) {
         endState();
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-        if (quitGameButton.getGlobalBounds().contains(mousePosView)) {
-            endState();
+        if(!isHeld) {
+            isHeld = true;
+            if (quitGameButton.getGlobalBounds().contains(mousePosView)) {
+                endState();
+            }
+            if (startGameButton.getGlobalBounds().contains(mousePosView)) {
+                isGameStarted = true;
+            }
         }
+    } else {
+        isHeld = false;
     }
 }
 void MenuState::update(const float& dt) {

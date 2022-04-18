@@ -17,7 +17,7 @@ Player::Player(sf::Texture *texture, sf::Vector2u _windowSize) : Entity(40) {
 }
 
 Player::~Player() {
-    std::cout<<"dead"<<std::endl;
+    std::cout<<"Player deleted"<<std::endl;
 }
 
 void Player::hitboxHandler() {
@@ -68,6 +68,15 @@ void Player::flap(const float& dt) {
         velocity.y = -sqrtf(2.0f * 981.f *flapHeight);
         angle = -10.f;
     }
+}
+void Player::restartPlayer() {
+    unsigned xPos = 0.3 * windowSize.x - (sprite.getGlobalBounds().width / 2);
+    unsigned yPos = 0.5 * windowSize.y - (sprite.getGlobalBounds().height / 2);
+    sprite.setPosition(xPos, yPos);
+    velocity = sf::Vector2f(0, 0);
+    isFalling = false;
+    isDead = false;
+    sprite.setRotation(0);
 }
 void Player::setSprite(sf::Texture *texture) {
     sprite.setTexture(*texture);

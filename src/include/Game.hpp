@@ -23,6 +23,7 @@ private:
     float dt;
 
     bool isOpen;
+    bool started;
     
     void initState();
     void initVariables();

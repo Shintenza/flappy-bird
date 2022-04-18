@@ -62,6 +62,15 @@ void GameState::setScore() {
             entities.front()->pass();
     }
 }
+void GameState::restartGame() {
+    std::cout<<"Game restarted"<<std::endl;
+    gameEnded = false;
+    sentStartingMessage = false;
+    score = 0;
+    player->restartPlayer();
+    gameClock.restart();
+    entities.clear();
+}
 
 sf::Text GameState::getStartText() {
     text.setCharacterSize(40);
@@ -110,7 +119,7 @@ GameState::GameState(sf::RenderWindow* window, std::string assetsFolderPath) : S
 
     isHeld = false;
     gameEnded = false;
-    sentStartingMessage = false;
+    sentStartingMessage = false;;
     readyToSpawnObstacle = false;
     groundHeight = 75;
     backgroundMoveSpeed = 300.f;
@@ -127,15 +136,21 @@ void GameState::handleInput(const float& dt) {
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
         std::cout<<"Game state finished"<<std::endl;
     }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && gameEnded) {
+        endState();
+    }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-        if (!player->checkIfActive() && !sentStartingMessage) {
+        if (!player->checkIfActive() && !sentStartingMessage && !gameEnded && !isHeld) {
             sentStartingMessage = true;
             player->startFalling();
             gameClock.restart();
         } else {
             if (!isHeld) {
                 isHeld = true;
-                player->flap(dt);
+                if (gameEnded)
+                    restartGame();
+                else 
+                    player->flap(dt);
             }
         }
     } else {
@@ -147,7 +162,8 @@ void GameState::update(const float& dt) {
     moveBackground(dt);
     handleInput(dt);
 
-    if (player->checkIfDead(collision_box)) {
+    std::cout<<gameEnded<<std::endl;
+    if (player->checkIfDead(collision_box) && sentStartingMessage) {
         gameEnded = true;
     } else {
         player->update(dt);

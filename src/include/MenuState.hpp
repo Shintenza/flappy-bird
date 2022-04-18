@@ -15,12 +15,15 @@ class MenuState: public State {
     sf::Vector2i mousePos;
     sf::Vector2f mousePosView;
 
+    bool isHeld;
+    bool& isGameStarted;
+
     void updateMousePos();
 
     void init(std::string assetsFolderPath);
     void positionMenu();
 public:
-    MenuState(sf::RenderWindow* window, std::string assetFolderPath);
+    MenuState(sf::RenderWindow* window, std::string assetFolderPath, bool& started);
 
     void handleInput(const float& dt);
     void update(const float& dt);

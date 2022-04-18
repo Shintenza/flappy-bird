@@ -21,6 +21,7 @@ private:
     bool gameEnded;
     bool sentStartingMessage;
     bool readyToSpawnObstacle;
+
     float groundHeight;
     float distance;
     float backgroundMoveSpeed;
@@ -34,6 +35,7 @@ private:
     void initCollisionBox();
     void spawnObstacles();
     void setScore();
+    void restartGame();
 
     sf::Text getStartText();
     sf::Text getEndingText();
