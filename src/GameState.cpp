@@ -162,7 +162,6 @@ void GameState::update(const float& dt) {
     moveBackground(dt);
     handleInput(dt);
 
-    std::cout<<gameEnded<<std::endl;
     if (player->checkIfDead(collision_box) && sentStartingMessage) {
         gameEnded = true;
     } else {

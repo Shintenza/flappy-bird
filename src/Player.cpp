@@ -7,6 +7,7 @@ Player::Player(sf::Texture *texture, sf::Vector2u _windowSize) : Entity(40) {
     setSprite(texture);
     flapHeight = 70.f;
     isFalling = false;
+    angle = 0;
 
     unsigned xPos = 0.3 * windowSize.x - (sprite.getGlobalBounds().width / 2);
     unsigned yPos = 0.5 * windowSize.y - (sprite.getGlobalBounds().height / 2);
@@ -77,6 +78,7 @@ void Player::restartPlayer() {
     isFalling = false;
     isDead = false;
     sprite.setRotation(0);
+    angle = 0;
 }
 void Player::setSprite(sf::Texture *texture) {
     sprite.setTexture(*texture);
