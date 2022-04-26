@@ -14,26 +14,42 @@ void GameState::loadBackground(std::string assetsFolderPath) {
         std::cout<<"Failed to load background texture"<<std::endl;
         exit(1);
     }
+    if (!groundTexture.loadFromFile(assetsFolderPath+"ground.png")) {
+        std::cout<<"Failed to load background texture"<<std::endl;
+        exit(1);
+    }
     backgroundYOffset = backgroundTexture.getSize().y - getWindow()->getSize().y;
-
-    backgroundSprite[0].setTexture(backgroundTexture);
-    backgroundSprite[1].setTexture(backgroundTexture);
-    backgroundSprite[0].setPosition(0, -backgroundYOffset);
-    backgroundSprite[1].setPosition(backgroundTexture.getSize().x, -backgroundYOffset);
+    for (int i = 0; i < 2; i++) {
+        background.backgroundSprite[i].setTexture(backgroundTexture);
+        background.groundSprite[i].setTexture(groundTexture);
+    }
+    background.backgroundSprite[0].setPosition(0, -backgroundYOffset - groundHeight);
+    background.backgroundSprite[1].setPosition(backgroundTexture.getSize().x, -backgroundYOffset - groundHeight);
+    background.groundSprite[0].setPosition(0, getWindow()->getSize().y - groundHeight);
+    background.groundSprite[1].setPosition(groundTexture.getSize().x, getWindow()->getSize().y - groundHeight);
 }
 void GameState::moveBackground(const float& dt) {
     int bgTextureSize = backgroundTexture.getSize().x;
+    int grTextureSize = groundTexture.getSize().x;
     
-    if (std::abs(backgroundSprite[0].getPosition().x) > bgTextureSize) {
-        backgroundSprite[0].setPosition(backgroundSprite[1].getPosition().x + bgTextureSize, -backgroundYOffset );
+    if (std::abs(background.backgroundSprite[0].getPosition().x) > bgTextureSize) {
+        background.backgroundSprite[0].setPosition(background.backgroundSprite[1].getPosition().x + bgTextureSize, -backgroundYOffset - groundHeight);
+    }
+    if (std::abs(background.groundSprite[0].getPosition().x) > grTextureSize) {
+        background.groundSprite[0].setPosition(background.groundSprite[1].getPosition().x + grTextureSize, getWindow()->getSize().y - groundHeight );
+    }
+    if (std::abs(background.backgroundSprite[1].getPosition().x) > bgTextureSize) {
+        background.backgroundSprite[1].setPosition(background.backgroundSprite[0].getPosition().x + bgTextureSize, -backgroundYOffset - groundHeight);
+    }
+    if (std::abs(background.groundSprite[1].getPosition().x) > grTextureSize) {
+        background.groundSprite[1].setPosition(background.groundSprite[0].getPosition().x + grTextureSize, getWindow()->getSize().y - groundHeight );
     }
 
-    if (std::abs(backgroundSprite[1].getPosition().x) > bgTextureSize) {
-        backgroundSprite[1].setPosition(backgroundSprite[0].getPosition().x + bgTextureSize, -backgroundYOffset );
-    }
 
-    backgroundSprite[0].move(-backgroundMoveSpeed*dt, 0);
-    backgroundSprite[1].move(-backgroundMoveSpeed*dt, 0);
+    background.backgroundSprite[0].move(-backgroundMoveSpeed*dt, 0);
+    background.backgroundSprite[1].move(-backgroundMoveSpeed*dt, 0);
+    background.groundSprite[0].move(-backgroundMoveSpeed*dt, 0);
+    background.groundSprite[1].move(-backgroundMoveSpeed*dt, 0);
 }
 void GameState::initCollisionBox() {
     collision_box.setSize(sf::Vector2f(getWindow()->getSize().x, groundHeight));
@@ -186,8 +202,8 @@ void GameState::update(const float& dt) {
 }
 
 void GameState::render(sf::RenderTarget* window) {
-    window->draw(backgroundSprite[0]);
-    window->draw(backgroundSprite[1]);
+    window->draw(background.backgroundSprite[0]);
+    window->draw(background.backgroundSprite[1]);
 
     if (!sentStartingMessage) {
         window->draw(getStartText());
@@ -200,6 +216,8 @@ void GameState::render(sf::RenderTarget* window) {
             e->render(window);
         }
     }
+    window->draw(background.groundSprite[0]);
+    window->draw(background.groundSprite[1]);
     if (gameEnded) {
         window->draw(getEndingText());
     } else {

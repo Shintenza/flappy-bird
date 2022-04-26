@@ -4,12 +4,19 @@
 #include "State.hpp"
 #include "Obstacle.hpp"
 
+struct Background {
+    sf::Sprite backgroundSprite[2];
+    sf::Sprite groundSprite[2];
+};
+
 class GameState : public State {
 private:
     Player* player;
 
     sf::Texture backgroundTexture;
-    sf::Sprite backgroundSprite[2];
+    sf::Texture groundTexture;
+    Background background;
+
     sf::RectangleShape collision_box;
     sf::Font font;
     sf::Text text;
