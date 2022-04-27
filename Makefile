@@ -1,11 +1,11 @@
 CC = g++
 CFLAGS = -Wall
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 SRC = src
 OBJ = obj
-SRCS = $(wildcard $(SRC)/*.cpp)
+SRCS = $(wildcard $(SRC)/*.cpp) $(wildcard $(SRC)/utils/*.cpp)
 OBJS = $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SRCS))
 HEADERS = $(wildcard $(SRC)/include/*.hpp)
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 BIN_DIR = bin
 BIN = $(BIN_DIR)/flappy_bird
 
@@ -15,7 +15,7 @@ $(BIN): $(OBJS) | structure
 $(OBJ)/%.o: $(SRC)/%.cpp $(HEADERS) | structure
 	$(CC) $(CFLAGS) -c $< -o $@	$(LDFLAGS)
 structure:
-	mkdir -p $(OBJ) $(BIN_DIR)
+	mkdir -p $(OBJ)/utils $(BIN_DIR)
 run: all
 	./$(BIN)
 clean:

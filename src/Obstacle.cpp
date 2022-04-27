@@ -11,7 +11,7 @@ Obstacle::Obstacle(sf::Texture* texture, sf::Vector2u _windowSize, float ground_
     setSprite(texture);
 }
 Obstacle::~Obstacle() {
-    printf("i am kill\n");
+    /* printf("deadl\n"); */
 }
 
 void Obstacle::move(const float& dt) {

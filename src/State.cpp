@@ -1,9 +1,10 @@
 #include "include/State.hpp"
 #include <iostream>
 
-State::State(sf::RenderWindow* _window) {
+State::State(sf::RenderWindow* _window, std::string state_name) {
    window = _window;
    isActive = true;
+   stateName = state_name;
 }
 void State::loadTexture(std::string name, std::string _path) {
     sf::Texture* texture = new sf::Texture();
@@ -28,13 +29,13 @@ sf::Texture* State::getTexture(std::string name) {
             return textures.find(name)->second;
         }
     } catch (...) {
-        std::cout<<"[ERROR] >> " << "tried to load texture: "<< name << " but it doesn't exist" <<std::endl;
+        log<std::string>(2, "tried to load texture: " + name + " but it doesn't exist!!!");
         exit(1);
     }
 }
 void State::endState() {
     isActive = false;
-    std::cout<<"state finished"<<std::endl;
+    log<std::string>(0, "state: " + stateName + " finished!");
 }
 bool State::getState() {
    return isActive ;

@@ -1,7 +1,7 @@
 #include "include/MenuState.hpp"
 #include <iostream>
 
-MenuState::MenuState(sf::RenderWindow* _window, std::string assets_path, bool& started) : State(_window), isGameStarted(started){
+MenuState::MenuState(sf::RenderWindow* _window, std::string assets_path, bool& started) : State(_window, "MenuState"), isGameStarted(started){
     init(assets_path);
     positionMenu();
 }

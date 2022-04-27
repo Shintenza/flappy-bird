@@ -1,9 +1,10 @@
 #include "include/GameState.hpp"
+#include "include/utils/logging.hpp"
 #include <iostream>
 
 void GameState::loadFonts(std::string assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font1.ttf")) {
-        std::cout<<"Failed to load font1"<<std::endl;
+        log(2, "failed to load font1");
         exit(1);
     }
     text.setFont(font);
@@ -80,7 +81,7 @@ void GameState::setScore() {
     }
 }
 void GameState::restartGame() {
-    std::cout<<"Game restarted"<<std::endl;
+    log(0, "Game restarted");
     gameEnded = false;
     sentStartingMessage = false;
     score = 0;
@@ -126,7 +127,7 @@ sf::Text GameState::getScoreText() {
     text.setPosition(xPos, yPos);
     return text;
 }
-GameState::GameState(sf::RenderWindow* window, std::string assetsFolderPath) : State(window) {
+GameState::GameState(sf::RenderWindow* window, std::string assetsFolderPath) : State(window, "GameState") {
     loadTexture("PLAYER", assetsFolderPath+"bird.png");
 
     sf::Texture *player_texture = getTexture("PLAYER");
