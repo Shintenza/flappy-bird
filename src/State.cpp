@@ -21,11 +21,16 @@ sf::RenderWindow* State::getWindow() {
     return window;
 }
 sf::Texture* State::getTexture(std::string name) {
-    if (textures.find(name)!=textures.end()) {
-        return textures.find(name)->second;
+    try {
+        if (textures.find(name)==textures.end()) {
+            throw -1;
+        } else {
+            return textures.find(name)->second;
+        }
+    } catch (...) {
+        std::cout<<"[ERROR] >> " << "tried to load texture: "<< name << " but it doesn't exist" <<std::endl;
+        exit(1);
     }
-    std::cout<<"Texture not found"<<std::endl;
-    return NULL;
 }
 void State::endState() {
     isActive = false;

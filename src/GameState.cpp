@@ -22,6 +22,7 @@ void GameState::loadBackground(std::string assetsFolderPath) {
     for (int i = 0; i < 2; i++) {
         background.backgroundSprite[i].setTexture(backgroundTexture);
         background.groundSprite[i].setTexture(groundTexture);
+
     }
     background.backgroundSprite[0].setPosition(0, -backgroundYOffset - groundHeight);
     background.backgroundSprite[1].setPosition(backgroundTexture.getSize().x, -backgroundYOffset - groundHeight);
@@ -99,16 +100,21 @@ sf::Text GameState::getStartText() {
 
     return text;
 }
-sf::Text GameState::getEndingText() {
+std::array<sf::Text,2> GameState::getEndingText() {
     text.setCharacterSize(69);
     text.setString("Game Over");
+    s_text.setCharacterSize(25);
+    s_text.setFont(font);
+    s_text.setString("Press space to start again");
 
     unsigned yPos = 0.5  * getWindow()->getSize().y - (text.getGlobalBounds().height /2);
     unsigned xPos = 0.5  * getWindow()->getSize().x - (text.getGlobalBounds().width / 2);
+    unsigned s_xPos = 0.5  * getWindow()->getSize().x - (s_text.getGlobalBounds().width / 2);
 
     text.setPosition(xPos, yPos);
+    s_text.setPosition(s_xPos, yPos + text.getGlobalBounds().height + 40);
 
-    return text;
+    return {text, s_text};
 }
 sf::Text GameState::getScoreText() {
     text.setCharacterSize(69);
@@ -149,9 +155,6 @@ GameState::GameState(sf::RenderWindow* window, std::string assetsFolderPath) : S
 };
 
 void GameState::handleInput(const float& dt) {  
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
-        std::cout<<"Game state finished"<<std::endl;
-    }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && gameEnded) {
         endState();
     }
@@ -219,9 +222,10 @@ void GameState::render(sf::RenderTarget* window) {
     window->draw(background.groundSprite[0]);
     window->draw(background.groundSprite[1]);
     if (gameEnded) {
-        window->draw(getEndingText());
+        for (sf::Text text : getEndingText()) {
+            window->draw(text);
+        }
     } else {
         player->render(window);
     }
-
 }

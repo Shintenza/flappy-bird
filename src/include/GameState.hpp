@@ -20,6 +20,7 @@ private:
     sf::RectangleShape collision_box;
     sf::Font font;
     sf::Text text;
+    sf::Text s_text;
     sf::Clock gameClock;
 
     std::vector<Obstacle*> entities;
@@ -45,7 +46,7 @@ private:
     void restartGame();
 
     sf::Text getStartText();
-    sf::Text getEndingText();
+    std::array<sf::Text, 2> getEndingText();
     sf::Text getScoreText();
 public:
     GameState(sf::RenderWindow* window, std::string assetFolderPath);

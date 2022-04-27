@@ -8,7 +8,6 @@ MenuState::MenuState(sf::RenderWindow* _window, std::string assets_path, bool& s
 void MenuState::updateMousePos() {
    mousePos = sf::Mouse::getPosition(*getWindow());
    mousePosView = getWindow()->mapPixelToCoords(mousePos);
-   /* printf("%d-%d, %f-%f\n", mousePos.x, mousePos.y, mousePosView.x, mousePosView.y); */
 }
 void MenuState::init(std::string assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font1.ttf")) {
