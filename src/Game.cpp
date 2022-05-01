@@ -4,13 +4,32 @@
 #include "include/MenuState.hpp"
 #include <iostream>
 
+Game::Game(int _argc, char **_argv) : argc(_argc), argv(_argv) {
+    initVariables();
+    initWindow();
+    initState();
+    dbHandler = new DbHandler(highestScore);
+    getStartSessionDate();
+}
+Game::~Game() {
+    dbHandler->insertSession(session_start, numberOfTries);
+
+    delete window;
+    delete dbHandler;
+}
+
+void Game::getStartSessionDate() {
+    session_start = std::time(nullptr);
+}
 void Game::initState () {
-    states.push(new MenuState(window, getAssetsPath(), started));
+    states.push(new MenuState(window, dbHandler, getAssetsPath(), started));
 }
 void Game::initVariables() {
     windowMode = sf::VideoMode(800,600);
     isOpen = true;
     started = false;
+    highestScore = 0;
+    numberOfTries = 0;
 }
 
 void Game::initWindow() {
@@ -19,14 +38,7 @@ void Game::initWindow() {
     window->setVerticalSyncEnabled(false);
 };
 
-Game::Game(int _argc, char **_argv) : argc(_argc), argv(_argv) {
-    initVariables();
-    initWindow();
-    initState();
-}
-Game::~Game() {
-    delete window;
-}
+
 void Game::updateDt(){
     dt = dtClock.restart().asSeconds();
 }
@@ -55,11 +67,12 @@ bool Game::isWindowOpen() const {
 sf::Vector2u Game::getWindowSize() const {
     return window->getSize();
 }
+
 void Game::update(){
     updatePollEvenets();
     if (started) {
         started = false;
-        states.push(new GameState(window, getAssetsPath()));
+        states.push(new GameState(window, dbHandler, getAssetsPath(), highestScore, numberOfTries));
     }
     if(states.size()>0) {
         if (!states.top()->getState()) {

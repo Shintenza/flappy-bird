@@ -2,7 +2,7 @@
 - klasy                                                     [x]
 - konstruktory, destruktory                                 [x]
 - konstruktor kopiujący
-- deklaracja przyjaciela
+- deklaracja przyjaciela                                    [x]
 - dziedziczenie                                             [x]
 - polimorfizm                                               [x]
 - klasa abstrakcyjna                                        [x]

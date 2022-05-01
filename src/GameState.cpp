@@ -2,6 +2,37 @@
 #include "include/utils/logging.hpp"
 #include <iostream>
 
+GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, unsigned& highest_score, unsigned& n_of_tires) 
+    : State(window, dbh, "GameState"), highestScore(highest_score), numberOfTries(n_of_tires)
+{
+    loadTexture("PLAYER", assetsFolderPath+"bird.png");
+
+    sf::Texture *player_texture = getTexture("PLAYER");
+
+    player = new Player(player_texture, getWindow()->getSize());
+    loadTexture("OBSTACLE", assetsFolderPath+"column.png");
+    sf::Texture *obstacle_texture = getTexture("OBSTACLE");
+
+    if (!player_texture || !obstacle_texture) {
+        std::cout<<"Player or obstacle texture not found"<<std::endl;
+    }
+
+    isHeld = false;
+    gameEnded = false;
+    sentStartingMessage = false;;
+    readyToSpawnObstacle = false;
+    groundHeight = 75;
+    backgroundMoveSpeed = 300.f;
+    distance = 300.f;
+    score = 0;
+    numberOfTries = 1;
+
+
+    loadFonts(assetsFolderPath);
+    loadBackground(assetsFolderPath);
+    initCollisionBox();
+};
+
 void GameState::loadFonts(std::string assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font1.ttf")) {
         log(2, "failed to load font1");
@@ -88,6 +119,7 @@ void GameState::restartGame() {
     player->restartPlayer();
     gameClock.restart();
     entities.clear();
+    numberOfTries++;
 }
 
 sf::Text GameState::getStartText() {
@@ -127,33 +159,6 @@ sf::Text GameState::getScoreText() {
     text.setPosition(xPos, yPos);
     return text;
 }
-GameState::GameState(sf::RenderWindow* window, std::string assetsFolderPath) : State(window, "GameState") {
-    loadTexture("PLAYER", assetsFolderPath+"bird.png");
-
-    sf::Texture *player_texture = getTexture("PLAYER");
-
-    player = new Player(player_texture, getWindow()->getSize());
-    loadTexture("OBSTACLE", assetsFolderPath+"column.png");
-    sf::Texture *obstacle_texture = getTexture("OBSTACLE");
-
-    if (!player_texture || !obstacle_texture) {
-        std::cout<<"Player or obstacle texture not found"<<std::endl;
-    }
-
-    isHeld = false;
-    gameEnded = false;
-    sentStartingMessage = false;;
-    readyToSpawnObstacle = false;
-    groundHeight = 75;
-    backgroundMoveSpeed = 300.f;
-    distance = 300.f;
-    score = 0;
-
-
-    loadFonts(assetsFolderPath);
-    loadBackground(assetsFolderPath);
-    initCollisionBox();
-};
 
 void GameState::handleInput(const float& dt) {  
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && gameEnded) {
@@ -184,6 +189,8 @@ void GameState::update(const float& dt) {
 
     if (player->checkIfDead(collision_box) && sentStartingMessage) {
         gameEnded = true;
+        if (score > highestScore)
+            highestScore = score;
     } else {
         player->update(dt);
     }

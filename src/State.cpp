@@ -1,10 +1,11 @@
 #include "include/State.hpp"
 #include <iostream>
 
-State::State(sf::RenderWindow* _window, std::string state_name) {
-   window = _window;
-   isActive = true;
-   stateName = state_name;
+State::State(sf::RenderWindow* _window, DbHandler* dbH, std::string state_name) {
+    window = _window;
+    isActive = true;
+    stateName = state_name;
+    dbHandler = dbH;
 }
 void State::loadTexture(std::string name, std::string _path) {
     sf::Texture* texture = new sf::Texture();

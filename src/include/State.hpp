@@ -1,5 +1,6 @@
 #pragma once
 #include "utils/logging.hpp"
+#include "DbHandler.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -9,8 +10,10 @@ private:
     bool isActive;
     std::map<std::string, sf::Texture*> textures;
     std::string stateName;
+protected:
+    DbHandler *dbHandler;
 public: 
-    State(sf::RenderWindow* window, std::string state_name);
+    State(sf::RenderWindow* window, DbHandler* dbHandler, std::string state_name);
     ~State();
 
     void endState();
