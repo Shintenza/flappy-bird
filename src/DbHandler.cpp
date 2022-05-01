@@ -2,6 +2,7 @@
 
 DbHandler::DbHandler(unsigned& highest_score) : highestScore(highest_score) {
     initDb();
+    getDbHighestScore();
 }
 DbHandler::~DbHandler() {
     sqlite3_close(db);
@@ -33,7 +34,7 @@ void DbHandler::initDb() {
         exit(1);
     }
 }
-void DbHandler::getHighestScore() {
+void DbHandler::getDbHighestScore() {
     int rc;
     std::string sql = "SELECT MAX(best_score) FROM game";
     rc = sqlite3_exec(db, sql.c_str(), getHighestScoreCallback, this, 0);

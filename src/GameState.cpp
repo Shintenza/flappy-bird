@@ -133,6 +133,18 @@ sf::Text GameState::getStartText() {
 
     return text;
 }
+sf::Text GameState::getBestScore () {
+    unsigned yPos = text.getPosition().y + text.getGlobalBounds().height +20;
+    unsigned xPos;
+
+    s_text.setFont(font);
+    s_text.setCharacterSize(21);
+    xPos = 0.5  * getWindow()->getSize().x - (s_text.getGlobalBounds().width / 2);
+    s_text.setString("Highest score: " + std::to_string(highestScore));
+    s_text.setPosition(xPos, yPos);
+
+    return s_text;
+}
 std::array<sf::Text,2> GameState::getEndingText() {
     text.setCharacterSize(69);
     text.setString("Game Over");
@@ -218,6 +230,7 @@ void GameState::render(sf::RenderTarget* window) {
 
     if (!sentStartingMessage) {
         window->draw(getStartText());
+        window->draw(getBestScore());
     }
     if (sentStartingMessage) {
         window->draw(getScoreText());

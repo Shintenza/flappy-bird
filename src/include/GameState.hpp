@@ -48,6 +48,7 @@ private:
     void restartGame();
 
     sf::Text getStartText();
+    sf::Text getBestScore();
     std::array<sf::Text, 2> getEndingText();
     sf::Text getScoreText();
 public:

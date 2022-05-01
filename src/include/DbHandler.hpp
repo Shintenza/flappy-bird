@@ -13,7 +13,7 @@ private:
 public:
     DbHandler(unsigned& highestScore);
     ~DbHandler();
-    void getHighestScore();
+    void getDbHighestScore();
     void insertSession(int session_started, int n_of_tries);
     void updateHighestScore(int score);
 };
