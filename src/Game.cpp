@@ -12,7 +12,7 @@ Game::Game(int _argc, char **_argv) : argc(_argc), argv(_argv) {
     getStartSessionDate();
 }
 Game::~Game() {
-    dbHandler->insertSession(session_start, numberOfTries);
+    dbHandler->insertSession(session_start, numberOfTries, flapCount, obstaclesCount);
 
     delete window;
     delete dbHandler;
@@ -30,6 +30,8 @@ void Game::initVariables() {
     started = false;
     highestScore = 0;
     numberOfTries = 0;
+    flapCount = 0;
+    obstaclesCount = 0;
 }
 
 void Game::initWindow() {
@@ -72,7 +74,7 @@ void Game::update(){
     updatePollEvenets();
     if (started) {
         started = false;
-        states.push(new GameState(window, dbHandler, getAssetsPath(), highestScore, numberOfTries));
+        states.push(new GameState(window, dbHandler, getAssetsPath(), highestScore, numberOfTries, flapCount, obstaclesCount));
     }
     if(states.size()>0) {
         if (!states.top()->getState()) {

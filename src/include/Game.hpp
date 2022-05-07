@@ -31,6 +31,8 @@ private:
 
     unsigned highestScore;
     unsigned numberOfTries;
+    unsigned flapCount;
+    unsigned obstaclesCount;
 
     bool isOpen;
     bool started;

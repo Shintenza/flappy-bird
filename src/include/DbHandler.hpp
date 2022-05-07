@@ -3,6 +3,13 @@
 #include <sqlite3.h>
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
+
+struct bestScores {
+    int time;
+    int score;
+    int number_of_tries;
+};
 
 class DbHandler {
 private:
@@ -14,6 +21,7 @@ public:
     DbHandler(unsigned& highestScore);
     ~DbHandler();
     void getDbHighestScore();
-    void insertSession(int session_started, int n_of_tries);
+    void insertSession(int session_started, int n_of_tries, int flap_count, int obstacles_count);
     void updateHighestScore(int score);
+    std::vector<bestScores> getBestScores();
 };

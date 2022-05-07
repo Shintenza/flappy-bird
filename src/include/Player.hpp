@@ -12,6 +12,8 @@ private:
     float angle;
     bool isFlying;
 
+    unsigned &flapCount;
+
     sf::RectangleShape hitbox;
 
     sf::Vector2f size;
@@ -22,7 +24,7 @@ public:
     float width;
     float height;
 
-    Player(sf::Texture *texture, sf::Vector2u _windowSize);
+    Player(sf::Texture *texture, sf::Vector2u _windowSize, unsigned& flap_count);
     ~Player();
 
     void hitboxHandler();

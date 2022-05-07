@@ -2,14 +2,15 @@
 #include "include/utils/logging.hpp"
 #include <iostream>
 
-GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, unsigned& highest_score, unsigned& n_of_tires) 
-    : State(window, dbh, "GameState"), highestScore(highest_score), numberOfTries(n_of_tires)
+GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, 
+    unsigned& highest_score, unsigned& n_of_tires, unsigned& flap_count, unsigned& obstacle_count) 
+    : State(window, dbh, "GameState"), highestScore(highest_score), numberOfTries(n_of_tires), flapCount(flap_count), obstacleCount(obstacle_count)
 {
     loadTexture("PLAYER", assetsFolderPath+"bird.png");
 
     sf::Texture *player_texture = getTexture("PLAYER");
 
-    player = new Player(player_texture, getWindow()->getSize());
+    player = new Player(player_texture, getWindow()->getSize(), flapCount);
     loadTexture("OBSTACLE", assetsFolderPath+"column.png");
     sf::Texture *obstacle_texture = getTexture("OBSTACLE");
 
@@ -107,7 +108,8 @@ void GameState::setScore() {
     if (!entities.empty() 
         && player->getSprite().getPosition().x > (entities.front()->getPosition().x + entities.front()->getBounding().width ) 
         && !entities.front()->checkIfPassed()) {
-            score+=1;         
+            score++;         
+            obstacleCount++;
             entities.front()->pass();
     }
 }
