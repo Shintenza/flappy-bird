@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include <array>
 
 struct bestScores {
     int time;
@@ -24,4 +25,5 @@ public:
     void insertSession(int session_started, int n_of_tries, int flap_count, int obstacles_count);
     void updateHighestScore(int score);
     std::vector<bestScores> getBestScores();
+    std::array<int, 2> getSecondaryStats();
 };

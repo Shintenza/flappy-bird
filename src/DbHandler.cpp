@@ -3,7 +3,6 @@
 DbHandler::DbHandler(unsigned& highest_score) : highestScore(highest_score) {
     initDb();
     getDbHighestScore();
-    /* getBestScores(); */
 }
 DbHandler::~DbHandler() {
     sqlite3_close(db);
@@ -11,7 +10,6 @@ DbHandler::~DbHandler() {
 // friend funcion
 int getHighestScoreCallback(void *data, int argc, char** argv, char**colName) {
     DbHandler *dbHandler = static_cast<DbHandler*>(data);
-    printf("%d\n", argc);
     if (argc > 1) {
         dbHandler->highestScore = std::stoi(argv[0]);
     } else {
@@ -21,11 +19,19 @@ int getHighestScoreCallback(void *data, int argc, char** argv, char**colName) {
 }
 int getBestScoresCallback(void* data, int argc, char** argv, char** colName) {
     std::vector<bestScores> *scores = static_cast<std::vector<bestScores>*>(data);
-    if (argc > 0) {
+    if (argc > 1) {
         bestScores data { std::stoi(argv[0]), std::stoi(argv[1]), std::stoi(argv[2])};
         scores->push_back(data);
     }
     return 0; 
+}
+int getSecondaryStatsCallback(void* data, int argc, char** argv, char** colName) {
+    std::array<int, 2> *stats = static_cast<std::array<int, 2>*>(data);
+    if (argc > 1) {
+        (*stats)[0] = std::stoi(argv[0]);
+        (*stats)[1] = std::stoi(argv[1]);
+    }
+    return 0;
 }
 void DbHandler::initDb() {
     int rc;
@@ -85,4 +91,17 @@ std::vector<bestScores> DbHandler::getBestScores() {
         exit(1);
     }
     return scores;
+}
+std::array<int, 2> DbHandler::getSecondaryStats() {
+    std::array<int, 2> stats; 
+    int rc;
+    std::string sql = "SELECT SUM(flap_count) AS flapCount, SUM(obstacles_count) AS obstaclesCount FROM game";
+    rc = sqlite3_exec(db, sql.c_str(), getSecondaryStatsCallback, &stats, 0);
+    if (rc != SQLITE_OK ) {
+        std::string dbErrorMsg = sqlite3_errmsg(db);
+        log(2, "SQL error during getting secondary stats: " + dbErrorMsg);
+        exit(1);
+    }
+    printf("%d, %d\n", stats[0], stats[1]);
+    return stats;
 }
