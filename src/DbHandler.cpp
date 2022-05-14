@@ -3,6 +3,8 @@
 DbHandler::DbHandler(unsigned& highest_score) : highestScore(highest_score) {
     initDb();
     getDbHighestScore();
+    getSecondaryStats();
+    getBestScores();
 }
 DbHandler::~DbHandler() {
     sqlite3_close(db);

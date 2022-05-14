@@ -5,10 +5,11 @@
 #include <iostream>
 
 Game::Game(int _argc, char **_argv) : argc(_argc), argv(_argv) {
+    dbHandler = new DbHandler(highestScore);
+
     initVariables();
     initWindow();
     initState();
-    dbHandler = new DbHandler(highestScore);
     getStartSessionDate();
 }
 Game::~Game() {
