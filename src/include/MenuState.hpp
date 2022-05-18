@@ -1,38 +1,8 @@
 #pragma once
 #include "State.hpp"
+#include "MainMenu.hpp"
+#include "StatsMenu.hpp"
 
-struct MainMenu {
-    sf::Font font;
-    sf::Text gameTitle;
-    sf::Text startGameText;
-    sf::Text quitGameText;
-    sf::Text checkStatsText;
-
-    sf::RectangleShape menuBox;
-    sf::RectangleShape startGameButton; 
-    sf::RectangleShape quitGameButton; 
-    sf::RectangleShape checkStatsButton;
-
-    void loadFonts(std::string& assetsFolderPath);
-    void positionMenu(sf::Vector2u windowSize);
-    void draw(sf::RenderTarget* target);
-};
-
-struct StatsScreen {
-    sf::Font font;
-    sf::Text header;
-    sf::Text bestScoresHeader;
-    sf::Text bestScoresText;
-    sf::Text secondaryStatsHeader;
-    sf::Text secondaryStats;
-    sf::Text buttonText;
-    void positionMenu(sf::Vector2u windowSize, std::vector<bestScores> scores);
-
-    sf::RectangleShape goBackButton;
-
-    void loadFonts(std::string& assetsFolderPath);
-    void draw(sf::RenderTarget* target);
-};
 
 class MenuState: public State {
     MainMenu main;

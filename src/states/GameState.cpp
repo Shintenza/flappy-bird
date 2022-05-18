@@ -1,5 +1,5 @@
-#include "include/GameState.hpp"
-#include "include/utils/logging.hpp"
+#include "../include/GameState.hpp"
+#include "../include/utils/logging.hpp"
 #include <iostream>
 
 GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, 
@@ -91,7 +91,6 @@ void GameState::initCollisionBox() {
 }
 
 void GameState::spawnObstacles() {
-    Obstacle *new_obstacle = new Obstacle(getTexture("OBSTACLE"), getWindow()->getSize(), groundHeight, backgroundMoveSpeed);
 
     if (entities.empty() && gameClock.getElapsedTime().asSeconds() > 4 && !gameEnded && sentStartingMessage) {
         readyToSpawnObstacle = true;
@@ -99,6 +98,7 @@ void GameState::spawnObstacles() {
         readyToSpawnObstacle = true;
     }
     if (readyToSpawnObstacle) {
+        Obstacle *new_obstacle = new Obstacle(getTexture("OBSTACLE"), getWindow()->getSize(), groundHeight, backgroundMoveSpeed);
         entities.push_back(new_obstacle);
         readyToSpawnObstacle = false;
     }
