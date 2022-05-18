@@ -18,4 +18,7 @@
 - własny szablon klasy (lub funkcji)                        [x]
 - przeciążanie operatorów                                   
 - wyjątki                                                   [x]
-- plik .h z deklaracja i .cpp z definicj� metod  - linker   [x]
+- plik .h z deklaracja i .cpp z definicją metod  - linker   [x]
+
+## Pomysły
+dodać listę wyników w danej grze, szansa na wykorzystanie algorytmów

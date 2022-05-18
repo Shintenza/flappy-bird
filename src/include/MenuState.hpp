@@ -25,7 +25,10 @@ struct StatsScreen {
     sf::Text bestScoresText;
     sf::Text secondaryStatsHeader;
     sf::Text secondaryStats;
+    sf::Text buttonText;
     void positionMenu(sf::Vector2u windowSize, std::vector<bestScores> scores);
+
+    sf::RectangleShape goBackButton;
 
     void loadFonts(std::string& assetsFolderPath);
     void draw(sf::RenderTarget* target);

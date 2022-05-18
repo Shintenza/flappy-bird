@@ -1,4 +1,4 @@
-#include "include/MenuState.hpp"
+#include "include/MenuState.hpp" 
 #include "include/DbHandler.hpp"
 #include <ctime>
 #include <time.h>
@@ -35,14 +35,17 @@ void MenuState::handleInput(const float& dt) {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
         if(!isHeld) {
             isHeld = true;
-            if (main.quitGameButton.getGlobalBounds().contains(mousePosView)) {
+            if (main.quitGameButton.getGlobalBounds().contains(mousePosView) && !isStatScreenActive) {
                 endState();
             }
-            if (main.startGameButton.getGlobalBounds().contains(mousePosView)) {
+            if (main.startGameButton.getGlobalBounds().contains(mousePosView) && !isStatScreenActive) {
                 isGameStarted = true;
             }
-            if (main.checkStatsButton.getGlobalBounds().contains(mousePosView)) {
+            if (main.checkStatsButton.getGlobalBounds().contains(mousePosView) && !isStatScreenActive) {
                 isStatScreenActive = true;
+            }
+            if (stats.goBackButton.getGlobalBounds().contains(mousePosView) && isStatScreenActive) {
+                isStatScreenActive = false;
             }
         }
     } else {
@@ -150,6 +153,18 @@ void StatsScreen::loadFonts(std::string& assetsFolderPath) {
     }
 }
 void StatsScreen::positionMenu(sf::Vector2u windowSize, std::vector<bestScores> scores) {
+    float b_height = windowSize.y*0.1f;
+    float b_width = windowSize.x*0.3f;
+
+    buttonText.setFont(font);
+    buttonText.setString("Back");
+    goBackButton.setSize(sf::Vector2f(b_width, b_height));
+    goBackButton.setPosition(windowSize.x *.5f - goBackButton.getGlobalBounds().width*.5f, windowSize.y - 100);
+    goBackButton.setFillColor(sf::Color::Blue);
+
+    buttonText.setPosition(windowSize.x *.5f - buttonText.getGlobalBounds().width *.5f, 
+            goBackButton.getPosition().y + goBackButton.getGlobalBounds().height *0.5f - buttonText.getGlobalBounds().height*0.5f);
+            
     header.setFont(font);
     header.setString("Game stats");
     header.setCharacterSize(37);
@@ -172,7 +187,7 @@ void StatsScreen::positionMenu(sf::Vector2u windowSize, std::vector<bestScores> 
             struct std::tm* tm = std::localtime(&time);
             char date[20];
             std::strftime(date, sizeof(date), "%d-%m-%Y", tm);
-            statsString+= std::string(date) + " " + std::to_string(score.score) + " " + std::to_string(score.number_of_tries) + "\n";
+            statsString+= "Date: " + std::string(date) + " Score: " + std::to_string(score.score) + " Tries: " + std::to_string(score.number_of_tries) + "\n";
         }
     }
     bestScoresText.setString(statsString);
@@ -183,4 +198,6 @@ void StatsScreen::draw(sf::RenderTarget* window) {
     window->draw(header);
     window->draw(bestScoresHeader);
     window->draw(bestScoresText);
+    window->draw(goBackButton);
+    window->draw(buttonText);
 }
