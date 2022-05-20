@@ -12,7 +12,7 @@ DbHandler::~DbHandler() {
 // friend funcion
 int getHighestScoreCallback(void *data, int argc, char** argv, char**colName) {
     DbHandler *dbHandler = static_cast<DbHandler*>(data);
-    if (argc > 1) {
+    if (argc > 0 && argv[0] != NULL) {
         dbHandler->highestScore = std::stoi(argv[0]);
     } else {
         dbHandler->highestScore = 0;
@@ -21,7 +21,7 @@ int getHighestScoreCallback(void *data, int argc, char** argv, char**colName) {
 }
 int getBestScoresCallback(void* data, int argc, char** argv, char** colName) {
     std::vector<bestScores> *scores = static_cast<std::vector<bestScores>*>(data);
-    if (argc > 1) {
+    if (argc > 0 && argv[0] != NULL && argv[1] != NULL && argv[2] != NULL) {
         bestScores data { std::stoi(argv[0]), std::stoi(argv[1]), std::stoi(argv[2])};
         scores->push_back(data);
     }
@@ -29,7 +29,7 @@ int getBestScoresCallback(void* data, int argc, char** argv, char** colName) {
 }
 int getSecondaryStatsCallback(void* data, int argc, char** argv, char** colName) {
     std::array<int, 2> *stats = static_cast<std::array<int, 2>*>(data);
-    if (argc > 1) {
+    if (argc > 0 && argv[0] != NULL && argv[1] != NULL) {
         (*stats)[0] = std::stoi(argv[0]);
         (*stats)[1] = std::stoi(argv[1]);
     }
@@ -83,7 +83,7 @@ void DbHandler::updateHighestScore(int score) {
     highestScore = score;
 }
 std::vector<bestScores> DbHandler::getBestScores() {
-    std::vector<bestScores> scores;
+    static std::vector<bestScores> scores;
     int rc;
     std::string sql = "SELECT * FROM game ORDER BY best_score DESC LIMIT 5";
     rc = sqlite3_exec(db, sql.c_str(), getBestScoresCallback, &scores, 0);

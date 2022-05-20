@@ -29,7 +29,6 @@ void Game::initVariables() {
     windowMode = sf::VideoMode(800,600);
     isOpen = true;
     started = false;
-    highestScore = 0;
     numberOfTries = 0;
     flapCount = 0;
     obstaclesCount = 0;

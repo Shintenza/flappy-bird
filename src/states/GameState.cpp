@@ -123,6 +123,16 @@ void GameState::restartGame() {
     entities.clear();
     numberOfTries++;
 }
+void GameState::updateLastScores(unsigned& score){
+    std::vector<int>::iterator min = std::min_element(lastSessionScores.begin(), lastSessionScores.end());
+    int min_index = std::distance(lastSessionScores.begin(), min);
+
+    if (lastSessionScores.size() < 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() ) {
+        lastSessionScores.push_back(score);
+    } else if (lastSessionScores.size() >= 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end()) {
+        lastSessionScores.at(min_index) = score;
+    }
+}
 
 sf::Text GameState::getStartText() {
     text.setCharacterSize(40);
@@ -141,11 +151,36 @@ sf::Text GameState::getBestScore () {
 
     s_text.setFont(font);
     s_text.setCharacterSize(21);
-    xPos = 0.5  * getWindow()->getSize().x - (s_text.getGlobalBounds().width / 2);
-    s_text.setString("Highest score: " + std::to_string(highestScore));
+    xPos = 0.5f * getWindow()->getSize().x - (s_text.getGlobalBounds().width / 2);
+    s_text.setString("Global highest score: " + std::to_string(highestScore));
     s_text.setPosition(xPos, yPos);
 
     return s_text;
+}
+sf::Text GameState::getBestSessionScores() {
+    unsigned yPos = s_text.getPosition().y + s_text.getGlobalBounds().height + 32;
+    unsigned xPos;
+    std::string returnStr = "Best scores of this session:";
+    
+    std::sort(lastSessionScores.begin(), lastSessionScores.end());
+
+    best_scores.setFont(font);
+    s_text.setCharacterSize(21);
+    xPos = 0.5f * getWindow()->getSize().x - (best_scores.getGlobalBounds().width / 2);
+
+    if (lastSessionScores.size() > 0) {
+        for(std::vector<int>::reverse_iterator it = lastSessionScores.rbegin(); it != lastSessionScores.rend(); ++it) {
+            if(it == (--lastSessionScores.rend())) {
+                returnStr+=" "+ std::to_string(*it);
+            } else {
+                returnStr+=" " + std::to_string(*it)+',';
+            }
+        }
+    }
+    best_scores.setString(returnStr);
+    best_scores.setPosition(xPos, yPos);
+
+    return best_scores; 
 }
 std::array<sf::Text,2> GameState::getEndingText() {
     text.setCharacterSize(69);
@@ -203,6 +238,7 @@ void GameState::update(const float& dt) {
 
     if (player->checkIfDead(collision_box) && sentStartingMessage) {
         gameEnded = true;
+        updateLastScores(score);
         if (score > highestScore)
             highestScore = score;
     } else {
@@ -233,6 +269,7 @@ void GameState::render(sf::RenderTarget* window) {
     if (!sentStartingMessage) {
         window->draw(getStartText());
         window->draw(getBestScore());
+        window->draw(getBestSessionScores());
     }
     if (sentStartingMessage) {
         window->draw(getScoreText());

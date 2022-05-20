@@ -11,7 +11,7 @@
 ## STL
 - szablony (vector, array)                                  [x]
 - iteratory                                                 [x]
-- algorytmy                                                 
+- algorytmy                                                 [x]
 
 ## C++
 - zakresowa pętla for                                       [x]

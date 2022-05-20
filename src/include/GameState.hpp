@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 
 #include "Player.hpp"
 #include "State.hpp"
@@ -21,15 +22,17 @@ private:
     sf::Font font;
     sf::Text text;
     sf::Text s_text;
+    sf::Text best_scores;
     sf::Clock gameClock;
 
     std::vector<Obstacle*> entities;
+    std::vector<int> lastSessionScores;
 
     bool isHeld;
     bool gameEnded;
     bool sentStartingMessage;
     bool readyToSpawnObstacle;
-
+    
     float groundHeight;
     float distance;
     float backgroundMoveSpeed;
@@ -49,8 +52,12 @@ private:
     void setScore();
     void restartGame();
 
+    void updateLastScores(unsigned& score);
+
+    
     sf::Text getStartText();
     sf::Text getBestScore();
+    sf::Text getBestSessionScores();
     std::array<sf::Text, 2> getEndingText();
     sf::Text getScoreText();
 public:
