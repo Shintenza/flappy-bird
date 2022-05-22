@@ -16,14 +16,12 @@ class DbHandler {
 private:
     sqlite3 *db;
     void initDb();
-    unsigned& highestScore;
-    friend int getHighestScoreCallback(void *data, int argc, char** argv, char**colName);
 public:
-    DbHandler(unsigned& highestScore);
+    DbHandler();
     ~DbHandler();
-    void getDbHighestScore();
-    void insertSession(int session_started, int n_of_tries, int flap_count, int obstacles_count);
-    void updateHighestScore(int score);
+
+    void insertSession(int started, int score, int tries, int flap_count, int obstacles_count);
+    unsigned getDbHighestScore();
     std::vector<bestScores> getBestScores();
     std::array<int, 2> getSecondaryStats();
 };
