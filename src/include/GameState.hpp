@@ -38,12 +38,18 @@ private:
     float backgroundMoveSpeed;
 
     int backgroundYOffset;
-    unsigned score;
-    unsigned &highestScore;
-    unsigned &numberOfTries;
-    unsigned &flapCount;
-    unsigned &obstacleCount;
+    
+    int& started;
 
+    // stats
+    unsigned score;
+    unsigned globalHighestScore;
+    unsigned sessionHighestScore;
+    unsigned numberOfTries;
+    unsigned flapCount;
+    unsigned obstacleCount;
+
+    void initVars();
     void loadFonts(std::string assetFolderPath);
     void loadBackground(std::string assetFolderPath);
     void moveBackground(const float& dt);
@@ -60,9 +66,11 @@ private:
     sf::Text getBestSessionScores();
     std::array<sf::Text, 2> getEndingText();
     sf::Text getScoreText();
+
 public:
-    GameState(sf::RenderWindow* window, DbHandler *dbH, std::string assetFolderPath, unsigned& highest_score, 
-            unsigned& number_of_tries, unsigned& flap_count, unsigned& obstacle_count);
+    GameState(sf::RenderWindow* window, DbHandler *dbH, std::string assetFolderPath, int& sessionStarted);
+    ~GameState();
+
     void handleInput(const float& dt);
     void update(const float& dt);
     void render(sf::RenderTarget* target);

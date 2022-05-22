@@ -2,10 +2,10 @@
 #include "../include/utils/logging.hpp"
 #include <iostream>
 
-GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, 
-    unsigned& highest_score, unsigned& n_of_tires, unsigned& flap_count, unsigned& obstacle_count) 
-    : State(window, dbh, "GameState"), highestScore(highest_score), numberOfTries(n_of_tires), flapCount(flap_count), obstacleCount(obstacle_count)
+GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, int& sessionStarted)
+    : State(window, dbh, "GameState"), started(sessionStarted)
 {
+    //TODO refactor this shit
     loadTexture("PLAYER", assetsFolderPath+"bird.png");
 
     sf::Texture *player_texture = getTexture("PLAYER");
@@ -18,6 +18,18 @@ GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string asset
         std::cout<<"Player or obstacle texture not found"<<std::endl;
     }
 
+
+    initVars();
+    loadFonts(assetsFolderPath);
+    loadBackground(assetsFolderPath);
+    initCollisionBox();
+};
+
+GameState::~GameState() {
+    dbHandler->addSession(started, sessionHighestScore, numberOfTries, flapCount, obstacleCount, dbHandler->checkIfSessionsExists(started));
+}
+
+void GameState::initVars() {
     isHeld = false;
     gameEnded = false;
     sentStartingMessage = false;;
@@ -25,14 +37,14 @@ GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string asset
     groundHeight = 75;
     backgroundMoveSpeed = 300.f;
     distance = 300.f;
+    
+    globalHighestScore = dbHandler->getDbHighestScore();
+    sessionHighestScore = 0;
     score = 0;
     numberOfTries = 1;
-
-
-    loadFonts(assetsFolderPath);
-    loadBackground(assetsFolderPath);
-    initCollisionBox();
-};
+    flapCount = 0;
+    obstacleCount = 0;
+}
 
 void GameState::loadFonts(std::string assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font1.ttf")) {
@@ -62,6 +74,7 @@ void GameState::loadBackground(std::string assetsFolderPath) {
     background.groundSprite[0].setPosition(0, getWindow()->getSize().y - groundHeight);
     background.groundSprite[1].setPosition(groundTexture.getSize().x, getWindow()->getSize().y - groundHeight);
 }
+
 void GameState::moveBackground(const float& dt) {
     int bgTextureSize = backgroundTexture.getSize().x;
     int grTextureSize = groundTexture.getSize().x;
@@ -152,7 +165,7 @@ sf::Text GameState::getBestScore () {
     s_text.setFont(font);
     s_text.setCharacterSize(21);
     xPos = 0.5f * getWindow()->getSize().x - (s_text.getGlobalBounds().width / 2);
-    s_text.setString("Global highest score: " + std::to_string(highestScore));
+    s_text.setString("Global highest score: " + std::to_string(globalHighestScore));
     s_text.setPosition(xPos, yPos);
 
     return s_text;
@@ -239,8 +252,11 @@ void GameState::update(const float& dt) {
     if (player->checkIfDead(collision_box) && sentStartingMessage) {
         gameEnded = true;
         updateLastScores(score);
-        if (score > highestScore)
-            highestScore = score;
+        if (score > sessionHighestScore) 
+            sessionHighestScore = score;
+        if (sessionHighestScore > globalHighestScore)
+            globalHighestScore = sessionHighestScore;
+
     } else {
         player->update(dt);
     }

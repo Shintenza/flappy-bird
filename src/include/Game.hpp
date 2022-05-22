@@ -16,7 +16,7 @@ private:
     sf::RenderWindow* window;
     sf::Event event;
 
-    std::time_t session_start;
+    int session_start;
 
     DbHandler *dbHandler;
 
@@ -28,11 +28,6 @@ private:
 
     sf::Clock dtClock;
     float dt;
-
-    unsigned highestScore;
-    unsigned numberOfTries;
-    unsigned flapCount;
-    unsigned obstaclesCount;
 
     bool isOpen;
     bool started;

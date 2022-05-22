@@ -20,7 +20,8 @@ public:
     DbHandler();
     ~DbHandler();
 
-    void insertSession(int started, int score, int tries, int flap_count, int obstacles_count);
+    bool checkIfSessionsExists(int started);
+    void addSession(int started, int score, int tries, int flap_count, int obstacles_count, bool update);
     unsigned getDbHighestScore();
     std::vector<bestScores> getBestScores();
     std::array<int, 2> getSecondaryStats();

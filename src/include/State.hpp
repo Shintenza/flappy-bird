@@ -14,7 +14,7 @@ protected:
     DbHandler *dbHandler;
 public: 
     State(sf::RenderWindow* window, DbHandler* dbHandler, std::string state_name);
-    ~State();
+    virtual ~State();
 
     void endState();
     bool getState();

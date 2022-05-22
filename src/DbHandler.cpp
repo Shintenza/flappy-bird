@@ -33,6 +33,13 @@ int getSecondaryStatsCallback(void* data, int argc, char** argv, char** colName)
     }
     return 0;
 }
+int checkIfSessionsExistsCallback(void* data, int argc, char** argv, char** colName) {
+    bool* exists = (bool*) data;
+    if (argc > 0 && argv[0]) {
+        *exists = true;
+    }
+    return 0;
+}
 void DbHandler::initDb() {
     int rc;
 
@@ -52,8 +59,21 @@ void DbHandler::initDb() {
         exit(1);
     }
 }
+bool DbHandler::checkIfSessionsExists(int started) {
+    bool exists = false;
+    int rc;
+    std::string sql = "SELECT session_date FROM game WHERE session_date=" + std::to_string(started) + ";";
+    rc = sqlite3_exec(db, sql.c_str(), checkIfSessionsExistsCallback, &exists, NULL);
+
+    if (rc != SQLITE_OK) {
+        std::string dbErrorMsg = sqlite3_errmsg(db);
+        log(2, "SQL error during searching for db entry: " +  dbErrorMsg);
+        exit(1);
+    }
+    return exists;
+}
 unsigned DbHandler::getDbHighestScore() {
-    unsigned highestScore;
+    unsigned highestScore = 0;
     int rc;
     std::string sql = "SELECT MAX(best_score) FROM game";
 
@@ -66,14 +86,25 @@ unsigned DbHandler::getDbHighestScore() {
     }
     return highestScore;
 }
-void DbHandler::insertSession(int started,int score, int tries, int flap_count, int obstacles_count) {
-    std::string sql = "INSERT INTO game (session_date, best_score, number_of_tries, flap_count, obstacles_count) VALUES ("\
-        + std::to_string(started)+","\
-        + std::to_string(score)+","\
-        + std::to_string(tries) +","\
-        + std::to_string(flap_count) +","\
-        + std::to_string(obstacles_count) +");";
+void DbHandler::addSession(int started,int score, int tries, int flap_count, int obstacles_count, bool update) {
+    std::string sql; 
     int rc;
+
+    if (update) {
+        sql = "UPDATE game SET\
+               best_score = " + std::to_string(score) + ",\
+               number_of_tries = number_of_tries +" + std::to_string(tries) + ", \
+               flap_count = flap_count +" + std::to_string(flap_count) + ", \
+               obstacles_count = obstacles_count +" + std::to_string(obstacles_count) + " WHERE session_date = " + std::to_string(started);
+    } else {
+        sql = "INSERT INTO game (session_date, best_score, number_of_tries, flap_count, obstacles_count) VALUES ("\
+            + std::to_string(started)+","\
+            + std::to_string(score)+","\
+            + std::to_string(tries) +","\
+            + std::to_string(flap_count) +","\
+            + std::to_string(obstacles_count) +");";
+    }
+
     rc = sqlite3_exec(db, sql.c_str(), 0, 0, 0);
     if (rc != SQLITE_OK ) {
         std::string dbErrorMsg = sqlite3_errmsg(db);
