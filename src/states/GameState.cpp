@@ -2,22 +2,24 @@
 #include "../include/utils/logging.hpp"
 #include <iostream>
 
+#define PLAYER_TEXTURE_NAME "bird"
+#define OBSTACLE_TEXTURE_NAME "column"
+
 GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, int& sessionStarted)
     : State(window, dbh, "GameState"), started(sessionStarted)
 {
-    //TODO refactor this shit
-    loadTexture("PLAYER", assetsFolderPath+"bird.png");
+    loadTexture(PLAYER_TEXTURE_NAME, assetsFolderPath+PLAYER_TEXTURE_NAME".png");
+    loadTexture(OBSTACLE_TEXTURE_NAME, assetsFolderPath+OBSTACLE_TEXTURE_NAME".png");
 
-    sf::Texture *player_texture = getTexture("PLAYER");
-
-    player = new Player(player_texture, getWindow()->getSize(), flapCount);
-    loadTexture("OBSTACLE", assetsFolderPath+"column.png");
-    sf::Texture *obstacle_texture = getTexture("OBSTACLE");
+    sf::Texture *player_texture = getTexture(PLAYER_TEXTURE_NAME);
+    sf::Texture *obstacle_texture = getTexture(OBSTACLE_TEXTURE_NAME);
 
     if (!player_texture || !obstacle_texture) {
+        exit(1);
         std::cout<<"Player or obstacle texture not found"<<std::endl;
     }
 
+    player = new Player(player_texture, getWindow()->getSize(), flapCount);
 
     initVars();
     loadFonts(assetsFolderPath);
@@ -252,8 +254,10 @@ void GameState::update(const float& dt) {
     if (player->checkIfDead(collision_box) && sentStartingMessage) {
         gameEnded = true;
         updateLastScores(score);
+
         if (score > sessionHighestScore) 
             sessionHighestScore = score;
+
         if (sessionHighestScore > globalHighestScore)
             globalHighestScore = sessionHighestScore;
 

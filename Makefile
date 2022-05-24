@@ -1,6 +1,6 @@
-CC = g++
-CFLAGS = -Wall
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsqlite3
+CC = gcc
+CFLAGS =-Wall -lstdc++ -lm
+LDFLAGS =-lsfml-graphics -lsfml-window -lsfml-system -lsqlite3
 SRC = src
 OBJ = obj
 SRCS = $(wildcard $(SRC)/*.cpp) $(wildcard $(SRC)/utils/*.cpp) $(wildcard $(SRC)/states/*.cpp) $(wildcard $(SRC)/states/menu/*.cpp)

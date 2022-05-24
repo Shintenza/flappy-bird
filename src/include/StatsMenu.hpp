@@ -12,7 +12,6 @@ private:
     sf::Text secondaryStats;
     sf::Text buttonText;
 
-
     std::vector<bestScores> scores;
 
     void positionMenu(sf::Vector2u windowSize);
@@ -20,14 +19,14 @@ private:
     sf::RectangleShape goBackButton;
 
     void loadFonts(std::string& assetsFolderPath);
+    void init(std::string& assetsFolderPath, sf::Vector2u windowSize);
 
     bool& active;
     bool isHeld;
 public:
-    StatsScreen(std::vector<bestScores> given_scores, bool& isStatScreenActive);
+    StatsScreen(std::string& assetsPath, sf::Vector2u windowSize, std::vector<bestScores> given_scores, bool& isStatScreenActive);
     bool isActive();
     void handleInput(sf::Vector2f mousePosView);
-    void init(std::string& assetsFolderPath, sf::Vector2u windowSize);
     void draw(sf::RenderTarget* target);
 };
 

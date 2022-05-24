@@ -1,5 +1,10 @@
 #include "../../include/StatsMenu.hpp"
 
+StatsScreen::StatsScreen(std::string& assetsPath, sf::Vector2u windowSize, std::vector<bestScores> given_scores, bool& isStatScreenActive) : active(isStatScreenActive) {
+    scores = given_scores;
+    init(assetsPath, windowSize);
+}
+
 void StatsScreen::loadFonts(std::string& assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font2.ttf")) {
         log(2, "failed to load main font");
@@ -46,9 +51,6 @@ void StatsScreen::positionMenu(sf::Vector2u windowSize) {
     bestScoresText.setString(statsString);
     bestScoresText.setPosition(windowSize.x*.5f - bestScoresText.getGlobalBounds().width*.5f, bestScoresHeader.getPosition().y + bestScoresHeader.getGlobalBounds().height + 30);
      
-}
-StatsScreen::StatsScreen(std::vector<bestScores> given_scores, bool& isStatScreenActive) : active(isStatScreenActive) {
-    scores = given_scores;
 }
 bool StatsScreen::isActive() {
     return active;

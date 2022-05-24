@@ -1,6 +1,9 @@
 #include "../../include/MainMenu.hpp"
 #include "../../include/utils/logging.hpp"
 
+MainMenu::MainMenu(std::string &assetsFolderPath, sf::Vector2u windowSize) {
+    init(assetsFolderPath, windowSize);
+}
 void MainMenu::loadFonts(std::string& assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font1.ttf")) {
         log(2, "failed to load main font");

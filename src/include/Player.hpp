@@ -10,7 +10,6 @@ private:
     void setSprite(sf::Texture* texturePtr);
     void fall(const float& dt);
     float angle;
-    bool isFlying;
 
     unsigned &flapCount;
 

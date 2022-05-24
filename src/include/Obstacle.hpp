@@ -9,7 +9,6 @@ private:
     bool passed;
 
     float gapSize = 150;
-    float speed;
     float ground_height;
     float moveSpeed;
 

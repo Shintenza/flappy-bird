@@ -4,8 +4,13 @@
 #include <time.h>
 #include <iostream>
 
-MenuState::MenuState(sf::RenderWindow* _window, DbHandler* dbh, std::string assets_path, bool& started) 
-    : State(_window, dbh, "MenuState"), stats(dbHandler->getBestScores(), isStatScreenActive), isGameStarted(started)
+#define BACKGROUND_TEXTURE_NAME "background"
+
+MenuState::MenuState(sf::RenderWindow* _window, DbHandler* dbh, std::string assets_path, bool& started) : 
+    State(_window, dbh, "MenuState"),
+    main(assets_path, getWindow()->getSize()),
+    stats(assets_path, getWindow()->getSize(), dbHandler->getBestScores(), isStatScreenActive),
+    isGameStarted(started)
 {
     init(assets_path);
 }
@@ -15,16 +20,15 @@ void MenuState::updateMousePos() {
 }
 void MenuState::init(std::string assetsFolderPath) {
 
-    loadTexture("BACKGROUND", assetsFolderPath+"background.png");
-    if (!getTexture("BACKGROUND")) {
-        std::cout<<"Failed to load bg image"<<std::endl;
+    //TODO return null when didn't load
+    loadTexture(BACKGROUND_TEXTURE_NAME, assetsFolderPath+BACKGROUND_TEXTURE_NAME".png");
+    if (!getTexture(BACKGROUND_TEXTURE_NAME)) {
+        log(2, "Failed to load bg image");
         exit(1);
     }
 
-    backgroundSprite.setTexture(*getTexture("BACKGROUND"));
+    backgroundSprite.setTexture(*getTexture(BACKGROUND_TEXTURE_NAME));
 
-    main.init(assetsFolderPath, getWindow()->getSize());
-    stats.init(assetsFolderPath, getWindow()->getSize());
     
     isHeld = false;
 }
