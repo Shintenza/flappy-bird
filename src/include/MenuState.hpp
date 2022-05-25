@@ -6,7 +6,7 @@
 
 class MenuState: public State {
     MainMenu main;
-    StatsScreen stats;
+    StatsMenu stats;
     sf::Sprite backgroundSprite;
 
     sf::Vector2i mousePos;

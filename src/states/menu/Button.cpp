@@ -16,7 +16,7 @@ Button::Button(sf::Vector2f& _mousePos,sf::Vector2f _size, sf::Vector2f _positio
     init();
 }
 Button::~Button() {
-    printf("Siema jestem deleted\n");
+    // printf("Siema jestem deleted\n");
 }
 Button::operator bool() const {
     if(button.getGlobalBounds().contains(mousePos)) {

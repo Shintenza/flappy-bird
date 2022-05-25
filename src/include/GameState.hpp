@@ -26,7 +26,7 @@ private:
     sf::Clock gameClock;
 
     std::vector<Obstacle*> entities;
-    std::vector<int> lastSessionScores;
+    std::vector<unsigned> lastSessionScores;
 
     bool isHeld;
     bool gameEnded;

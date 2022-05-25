@@ -41,7 +41,6 @@ void MainMenu::positionMenu(sf::Vector2u windowSize, std::string& assetsFolderPa
     sf::Vector2f buttonSize = sf::Vector2f(width*.5f, height*.15f);
     sf::Vector2f startGamePos = sf::Vector2f(windowSize.x * 0.5f - buttonSize.x * 0.5f, gameTitle.getPosition().y + gameTitle.getGlobalBounds().height + 60);
 
-
     buttons.push_back(new Button(mousePosView, buttonSize, startGamePos, assetsFolderPath, sf::Color::Blue, "Start", width*.09f, true));
 
     sf::Vector2f quitGamePos = sf::Vector2f(buttons.back()->getEndYPosition().x, buttons.back()->getEndYPosition().y + 40);

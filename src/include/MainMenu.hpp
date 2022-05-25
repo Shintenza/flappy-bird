@@ -8,16 +8,10 @@ class MainMenu {
 private:
     sf::Font font;
     sf::Text gameTitle;
-    sf::Text startGameText;
-    sf::Text quitGameText;
-    sf::Text checkStatsText;
 
     sf::Vector2f& mousePosView;
 
     sf::RectangleShape menuBox;
-    sf::RectangleShape startGameButton; 
-    sf::RectangleShape quitGameButton; 
-    sf::RectangleShape checkStatsButton;
 
     std::vector<Button*> buttons;
 

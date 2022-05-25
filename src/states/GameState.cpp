@@ -139,12 +139,12 @@ void GameState::restartGame() {
     numberOfTries++;
 }
 void GameState::updateLastScores(unsigned& score){
-    std::vector<int>::iterator min = std::min_element(lastSessionScores.begin(), lastSessionScores.end());
-    int min_index = std::distance(lastSessionScores.begin(), min);
+    std::vector<unsigned>::iterator min = std::min_element(lastSessionScores.begin(), lastSessionScores.end());
+    unsigned min_index = std::distance(lastSessionScores.begin(), min);
 
-    if (lastSessionScores.size() < 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() ) {
+    if (lastSessionScores.size() < 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() && score > 0 ) {
         lastSessionScores.push_back(score);
-    } else if (lastSessionScores.size() >= 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() && score > lastSessionScores[min_index]) {
+    } else if (lastSessionScores.size() >= 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() && score > lastSessionScores[min_index] && score > 0) {
         lastSessionScores.at(min_index) = score;
     }
 }
@@ -184,7 +184,7 @@ sf::Text GameState::getBestSessionScores() {
     xPos = 0.5f * getWindow()->getSize().x - (best_scores.getGlobalBounds().width / 2);
 
     if (lastSessionScores.size() > 0) {
-        for(std::vector<int>::reverse_iterator it = lastSessionScores.rbegin(); it != lastSessionScores.rend(); ++it) {
+        for(std::vector<unsigned>::reverse_iterator it = lastSessionScores.rbegin(); it != lastSessionScores.rend(); ++it) {
             if(it == (--lastSessionScores.rend())) {
                 returnStr+=" "+ std::to_string(*it);
             } else {
