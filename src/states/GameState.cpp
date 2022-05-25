@@ -144,7 +144,7 @@ void GameState::updateLastScores(unsigned& score){
 
     if (lastSessionScores.size() < 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() ) {
         lastSessionScores.push_back(score);
-    } else if (lastSessionScores.size() >= 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end()) {
+    } else if (lastSessionScores.size() >= 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() && score > lastSessionScores[min_index]) {
         lastSessionScores.at(min_index) = score;
     }
 }

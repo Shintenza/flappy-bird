@@ -21,6 +21,7 @@ class MenuState: public State {
     void init(std::string assetsFolderPath);
 public:
     MenuState(sf::RenderWindow* window, DbHandler *dbH, std::string assetFolderPath, bool& started);
+    ~MenuState();
 
     void handleInput(const float& dt);
     void update(const float& dt);

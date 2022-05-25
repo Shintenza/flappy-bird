@@ -16,7 +16,7 @@
 ## C++
 - zakresowa pętla for                                       [x]
 - własny szablon klasy (lub funkcji)                        [x]
-- przeciążanie operatorów                                   
+- przeciążanie operatorów                                   [x]
 - wyjątki                                                   [x]
 - plik .h z deklaracja i .cpp z definicją metod  - linker   [x]
 

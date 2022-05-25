@@ -11,8 +11,12 @@ Game::Game(int _argc, char **_argv) : argc(_argc), argv(_argv) {
     getStartSessionDate();
 }
 Game::~Game() {
-    // dbHandler->insertSession(session_start, highestScore, numberOfTries, flapCount, obstaclesCount);
-
+    if (!states.empty()) {
+        while (!states.empty()) {
+            delete states.top();
+            states.pop();
+        }
+    }
     delete window;
     delete dbHandler;
 }

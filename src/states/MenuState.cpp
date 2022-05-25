@@ -8,11 +8,14 @@
 
 MenuState::MenuState(sf::RenderWindow* _window, DbHandler* dbh, std::string assets_path, bool& started) : 
     State(_window, dbh, "MenuState"),
-    main(assets_path, getWindow()->getSize()),
+    main(assets_path, getWindow()->getSize(), mousePosView),
     stats(assets_path, getWindow()->getSize(), dbHandler->getBestScores(), isStatScreenActive),
     isGameStarted(started)
 {
     init(assets_path);
+}
+MenuState::~MenuState() {
+    printf("MENU STATE destructor\n");
 }
 void MenuState::updateMousePos() {
    mousePos = sf::Mouse::getPosition(*getWindow());
