@@ -14,11 +14,10 @@ private:
 
     sf::Vector2f& mousePos;
 
-    std::vector<bestScores> scores;
-
     void positionMenu(std::string& assetsFolderPath, sf::Vector2u windowSize);
     
     Button *goBack;
+    DbHandler* dbHandler;
     
     void loadFonts(std::string& assetsFolderPath);
     void init(std::string& assetsFolderPath, sf::Vector2u windowSize);
@@ -26,7 +25,7 @@ private:
     bool& active;
     bool isHeld;
 public:
-    StatsMenu(std::string& assetsPath, sf::Vector2u windowSize, std::vector<bestScores> given_scores, bool& isStatScreenActive, sf::Vector2f& mousePos);
+    StatsMenu(std::string& assetsPath, sf::Vector2u windowSize, DbHandler* dbHandler, bool& isStatScreenActive, sf::Vector2f& mousePos);
     ~StatsMenu();
     bool isActive();
     void handleInput(sf::Vector2f mousePosView);

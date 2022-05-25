@@ -9,7 +9,7 @@
 MenuState::MenuState(sf::RenderWindow* _window, DbHandler* dbh, std::string assets_path, bool& started) : 
     State(_window, dbh, "MenuState"),
     main(assets_path, getWindow()->getSize(), mousePosView),
-    stats(assets_path, getWindow()->getSize(), dbHandler->getBestScores(), isStatScreenActive, mousePosView),
+    stats(assets_path, getWindow()->getSize(), dbh, isStatScreenActive, mousePosView),
     isGameStarted(started)
 {
     init(assets_path);

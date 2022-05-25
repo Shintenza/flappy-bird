@@ -1,9 +1,9 @@
 #include "../../include/StatsMenu.hpp"
 
-StatsMenu::StatsMenu(std::string& assetsPath, sf::Vector2u windowSize, std::vector<bestScores> given_scores, bool& isStatScreenActive, sf::Vector2f& _mousePos) : 
+StatsMenu::StatsMenu(std::string& assetsPath, sf::Vector2u windowSize, DbHandler* _dbHandler, bool& isStatScreenActive, sf::Vector2f& _mousePos) : 
     mousePos(_mousePos),
     active(isStatScreenActive) {
-    scores = given_scores;
+    dbHandler = _dbHandler;
     init(assetsPath, windowSize);
 }
 
@@ -21,6 +21,9 @@ void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) 
 
     sf::Vector2f buttonSize =sf::Vector2f(b_width, b_height);
     sf::Vector2f buttonPos = sf::Vector2f(windowSize.x *.5f - buttonSize.x*.5f, windowSize.y - 100);
+
+    std::array<int, 2> secondaryStatsArray = dbHandler->getSecondaryStats();
+    std::vector<bestScores> scores = dbHandler->getBestScores();
     
     goBack = new Button(mousePos, buttonSize, buttonPos, assetsPath, sf::Color::Cyan, "Back", 37, false);
 
@@ -37,11 +40,12 @@ void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) 
     bestScoresText.setFont(font);
     bestScoresText.setCharacterSize(19);
     std::string statsString = "";
+    std::string secondaryStatsString;
 
     if (scores.empty()) {
         statsString = "Nothing to display";
     } else {
-        for (auto score : scores) {
+        for (bestScores score : scores) {
             std::time_t time = score.time;
             struct std::tm* tm = std::localtime(&time);
             char date[20];
@@ -51,7 +55,20 @@ void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) 
     }
     bestScoresText.setString(statsString);
     bestScoresText.setPosition(windowSize.x*.5f - bestScoresText.getGlobalBounds().width*.5f, bestScoresHeader.getPosition().y + bestScoresHeader.getGlobalBounds().height + 30);
-     
+
+    secondaryStatsHeader.setString("Secondary Stats:");
+    secondaryStatsHeader.setCharacterSize(28);
+    secondaryStatsHeader.setFont(font);
+    secondaryStatsHeader.setPosition(windowSize.x*.5f - secondaryStatsHeader.getGlobalBounds().width*.5f, bestScoresText.getPosition().y + bestScoresText.getGlobalBounds().height + 30);
+    
+    if (secondaryStatsArray.empty()) {
+        secondaryStatsString = "Nothing to display";
+    }
+    secondaryStatsString = "Flap Count: " + std::to_string(secondaryStatsArray[0]) + " Passed obstacles: " + std::to_string(secondaryStatsArray[1]);
+    secondaryStats.setString(secondaryStatsString);
+    secondaryStats.setFont(font);
+    secondaryStats.setCharacterSize(19);
+    secondaryStats.setPosition(windowSize.x*.5f - secondaryStats.getGlobalBounds().width*.5f, secondaryStatsHeader.getPosition().y + secondaryStatsHeader.getGlobalBounds().height + 30);
 }
 bool StatsMenu::isActive() {
     return active;
@@ -77,5 +94,7 @@ void StatsMenu::draw(sf::RenderTarget* window) {
     window->draw(header);
     window->draw(bestScoresHeader);
     window->draw(bestScoresText);
+    window->draw(secondaryStatsHeader);
+    window->draw(secondaryStats);
     goBack->draw(window);
 }
