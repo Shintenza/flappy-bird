@@ -2,9 +2,9 @@
 #include <iostream>
 #include <cmath>
 
-Player::Player(sf::Texture *texture, sf::Vector2u _windowSize, unsigned& flap_count) : Entity(40), flapCount(flap_count) {
+Player::Player(sf::Texture *_texture, sf::Vector2u _windowSize, unsigned& flap_count) : Entity(_texture, 40), flapCount(flap_count) {
     windowSize = _windowSize;
-    setSprite(texture);
+    setSprite();
     flapHeight = 70.f;
     isFalling = false;
     angle = 0;
@@ -81,7 +81,7 @@ void Player::restartPlayer() {
     sprite.setRotation(0);
     angle = 0;
 }
-void Player::setSprite(sf::Texture *texture) {
+void Player::setSprite() {
     sprite.setTexture(*texture);
     sprite.setScale(0.1f, 0.1f);
 }

@@ -113,7 +113,14 @@ void GameState::spawnObstacles() {
         readyToSpawnObstacle = true;
     }
     if (readyToSpawnObstacle) {
-        Obstacle *new_obstacle = new Obstacle(getTexture(OBSTACLE_TEXTURE_NAME), getWindow()->getSize(), groundHeight, backgroundMoveSpeed);
+        Obstacle *new_obstacle;
+
+        if (entities.empty()) {
+            new_obstacle = new Obstacle(getTexture(OBSTACLE_TEXTURE_NAME), getWindow()->getSize(), groundHeight, backgroundMoveSpeed);
+        } else {
+            new_obstacle = new Obstacle(*entities.back());
+        }
+
         entities.push_back(new_obstacle);
         readyToSpawnObstacle = false;
     }

@@ -2,12 +2,11 @@
 #include <SFML/Graphics.hpp>
 #include "Entity.hpp"
 
-class Player : public Entity{ 
+class Player : public Entity { 
 private:
     float flapHeight;
 
     bool isFalling;
-    void setSprite(sf::Texture* texturePtr);
     void fall(const float& dt);
     float angle;
 
@@ -19,6 +18,8 @@ private:
     sf::Vector2u windowSize;
     sf::Vector2f velocity;
     sf::Vector2f position;
+
+    void setSprite();
 public:
     float width;
     float height;

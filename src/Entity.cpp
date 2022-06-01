@@ -1,9 +1,10 @@
 #include "include/Entity.hpp"
 #include <iostream>
 
-Entity::Entity(float _speed) {
+Entity::Entity(sf::Texture* _texture, float _speed) {
     isDead = false;
     speed = _speed;
+    texture = _texture;
 }
 Entity::~Entity() {
     std::cout<<"destroyed"<<std::endl;

@@ -1,7 +1,7 @@
 ## Projekt obiektowy:
 - klasy                                                     [x]
 - konstruktory, destruktory                                 [x]
-- konstruktor kopiujący
+- konstruktor kopiujący                                     [x]
 - deklaracja przyjaciela                                    [x]
 - dziedziczenie                                             [x]
 - polimorfizm                                               [x]
