@@ -23,7 +23,7 @@ void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) 
     sf::Vector2f buttonPos = sf::Vector2f(windowSize.x *.5f - buttonSize.x*.5f, windowSize.y - 100);
 
     std::array<int, 2> secondaryStatsArray = dbHandler->getSecondaryStats();
-    std::vector<bestScores> scores = dbHandler->getBestScores();
+    std::vector<bestScore> scores = dbHandler->getBestScores();
     
     goBack = new Button(mousePos, buttonSize, buttonPos, assetsPath, sf::Color::Cyan, "Back", 37, false);
 
@@ -45,7 +45,7 @@ void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) 
     if (scores.empty()) {
         statsString = "Nothing to display";
     } else {
-        for (bestScores score : scores) {
+        for (bestScore score : scores) {
             std::time_t time = score.time;
             struct std::tm* tm = std::localtime(&time);
             char date[20];
