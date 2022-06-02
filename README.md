@@ -1,24 +1,31 @@
-## Projekt obiektowy:
-- klasy                                                     [x]
-- konstruktory, destruktory                                 [x]
-- konstruktor kopiujący                                     [x]
-- deklaracja przyjaciela                                    [x]
-- dziedziczenie                                             [x]
-- polimorfizm                                               [x]
-- klasa abstrakcyjna                                        [x]
-- czysto wirtualne metody                                   [x]
+# Flappy Bird - Projekt zaliczeniowy z języka C++
 
-## STL
-- szablony (vector, array)                                  [x]
-- iteratory                                                 [x]
-- algorytmy                                                 [x]
+## Spis treści:
+1. [Kilka słów o projekcie](#kilka-słów-o-projekcie)
+2. [Zależności](#zależności)
+3. [Kompilacja i użytkowanie](#kompilacja-i-użytkowanie)
 
-## C++
-- zakresowa pętla for                                       [x]
-- własny szablon klasy (lub funkcji)                        [x]
-- przeciążanie operatorów                                   [x]
-- wyjątki                                                   [x]
-- plik .h z deklaracja i .cpp z definicją metod  - linker   [x]
+## Kilka słów o projekcie
+Projekt ten jest próbą odtworzenia kultowej gry na urządzenia mobilne, jaką jest Flappy Bird. Gra powstała w oparciu o takie biblioteki jak SFML, czy sqlite3.
+Projekt testowany (i pisany) był na systemie GNU/Linux, więc nie wiem, czy działa na systemie Windows. 
 
-## Pomysły
-dodać listę wyników w danej grze, szansa na wykorzystanie algorytmów
+## Zależności
+Do poprawnego działania gry, wymagane są poniższe zależności:
+- [SFML](https://www.sfml-dev.org/)
+- [sqlite3](https://www.sqlite.org/index.html)
+- [make](https://www.gnu.org/software/make/)
+
+## Kompilacja i użytkowanie
+Przed rozpoczęciem procesu kompilacji programu upewnij się, że masz zainstalowane wszystkie, wymagane zależności:
+
+ArchLinux:
+> sudo pacman -S sqlite sfml make g++
+
+Fedora:
+> sudo dnf install sqlite sqlite-devel SFML SFML-devel make g++
+
+Debian:
+> sudo apt install libsqlite3-dev libsfml-dev make g++
+
+### Uruchamianie/kompilowanie
+Będąc w katalogu projektu, uruchom polecenie `make run`
