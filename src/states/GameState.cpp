@@ -286,7 +286,7 @@ void GameState::update(const float& dt) {
 
     if (entities.size()>0) {
         if (entities.at(0)->isColliding(player->getHitboxBounding())){
-            player->stopFalling();
+            player->stopFalling(dt);
         }
     }
     setScore();

@@ -8,8 +8,11 @@ private:
     float flapHeight;
 
     bool isFalling;
+    bool isFlying;
     void fall(const float& dt);
     float angle;
+    float startX;
+    float startY;
 
     unsigned &flapCount;
 
@@ -28,9 +31,8 @@ public:
     Player(sf::Texture *texture, sf::Vector2u _windowSize, unsigned& flap_count);
     ~Player();
 
-    void hitboxHandler();
     void startFalling();
-    void stopFalling();
+    void stopFalling(const float& dt);
     void move(float x, float y);
     void flap(const float& dt);
     void restartPlayer();
