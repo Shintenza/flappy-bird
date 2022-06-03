@@ -36,7 +36,9 @@ sf::Texture* State::getTexture(std::string name) {
 }
 void State::endState() {
     isActive = false;
+    #if DEV_MODE == 1
     log<std::string>(0, "state: " + stateName + " finished!");
+    #endif
 }
 bool State::getState() {
    return isActive ;

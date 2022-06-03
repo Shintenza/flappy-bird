@@ -29,6 +29,9 @@ GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string asset
 
 GameState::~GameState() {
     dbHandler->addSession(started, sessionHighestScore, numberOfTries, flapCount, obstacleCount, dbHandler->checkIfSessionsExists(started));
+    #if DEV_MODE == 1
+    log(0, "GameState destroyed, saved the session to the database");
+    #endif
 }
 
 void GameState::initVars() {

@@ -1,6 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+#include "utils/logging.hpp"
+#include "main.hpp"
+
 class Entity {
 protected:
     sf::Sprite sprite;
@@ -9,7 +12,6 @@ protected:
     sf::Texture* texture;
 public:
     Entity(sf::Texture* _texture, float _speed);
-    //TODO destructor;
     virtual ~Entity();
     sf::FloatRect getBounding() const;
     sf::Sprite getSprite() const;

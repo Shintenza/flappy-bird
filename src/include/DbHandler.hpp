@@ -1,5 +1,6 @@
 # pragma once
 #include "utils/logging.hpp"
+#include "main.hpp"
 #include <sqlite3.h>
 #include <stdlib.h>
 #include <iostream>

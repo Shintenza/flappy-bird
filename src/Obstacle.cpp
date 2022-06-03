@@ -23,7 +23,9 @@ Obstacle::Obstacle(const Obstacle& other) : Entity(other.texture, 40){
     setPlacement();
 }
 Obstacle::~Obstacle() {
-    /* printf("deadl\n"); */
+    #if DEV_MODE == 1
+    log(0, "obstacle destructor");
+    #endif
 }
 
 void Obstacle::move(const float& dt) {

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Button.hpp"
+#include "main.hpp"
 
 class MainMenu {
 private:

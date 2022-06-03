@@ -19,6 +19,9 @@ Game::~Game() {
     }
     delete window;
     delete dbHandler;
+    #if DEV_MODE==1
+    log(0, "game destroyed");
+    #endif
 }
 
 void Game::getStartSessionDate() {

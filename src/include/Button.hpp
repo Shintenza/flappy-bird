@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "utils/logging.hpp"
+#include "main.hpp"
 
 #define FONT_NAME "font2"
 

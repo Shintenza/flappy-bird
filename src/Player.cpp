@@ -1,4 +1,5 @@
 #include "include/Player.hpp"
+#include "include/utils/logging.hpp"
 #include <iostream>
 #include <cmath>
 
@@ -18,7 +19,9 @@ Player::Player(sf::Texture *_texture, sf::Vector2u _windowSize, unsigned& flap_c
 }
 
 Player::~Player() {
-    std::cout<<"Player deleted"<<std::endl;
+    #if DEV_MODE == 1
+    log(0, "player deleted");
+    #endif
 }
 
 void Player::hitboxHandler() {

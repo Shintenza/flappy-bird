@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "DbHandler.hpp"
 #include "Button.hpp"
+#include "main.hpp"
 
 class StatsMenu {
 private:

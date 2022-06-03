@@ -6,6 +6,9 @@ DbHandler::DbHandler() {
 
 DbHandler::~DbHandler() {
     sqlite3_close(db);
+    #if DEV_MODE == 1
+    log(0, "Connection with the database closed");
+    #endif
 }
 
 int getHighestScoreCallback(void *data, int argc, char** argv, char**colName) {
@@ -50,7 +53,9 @@ void DbHandler::initDb() {
         log(1, "Couldn't open database: " + dbErrorMsg);
         exit(1);
     } else {
+        #if DEV_MODE == 1
         log(0, "Connected to the database!");
+        #endif
     }
     std::string sql = "CREATE TABLE IF NOT EXISTS game (session_date INT, best_score INT, number_of_tries INT, flap_count INT, obstacles_count INT);";
     rc = sqlite3_exec(db, sql.c_str(), 0, 0, 0);

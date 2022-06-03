@@ -2,6 +2,7 @@
 #include "State.hpp"
 #include "MainMenu.hpp"
 #include "StatsMenu.hpp"
+#include "main.hpp"
 
 
 class MenuState: public State {

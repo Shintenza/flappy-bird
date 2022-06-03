@@ -1,4 +1,7 @@
+#pragma once
 #include "Entity.hpp"
+#include "main.hpp"
+#include "utils/logging.hpp"
 
 class Obstacle : public Entity{
 private:

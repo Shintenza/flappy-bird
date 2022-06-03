@@ -5,6 +5,8 @@
 #include "State.hpp"
 #include "Obstacle.hpp"
 
+#include "main.hpp"
+
 struct Background {
     sf::Sprite backgroundSprite[2];
     sf::Sprite groundSprite[2];

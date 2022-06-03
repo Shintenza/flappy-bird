@@ -9,6 +9,9 @@ StatsMenu::StatsMenu(std::string& assetsPath, sf::Vector2u windowSize, DbHandler
 
 StatsMenu::~StatsMenu() {
     delete goBack;
+    #if DEV_MODE == 1
+    log(0, "StatsMenu destructor");
+    #endif
 }
 void StatsMenu::loadFonts(std::string& assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font2.ttf")) {

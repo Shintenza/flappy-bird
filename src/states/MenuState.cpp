@@ -15,7 +15,9 @@ MenuState::MenuState(sf::RenderWindow* _window, DbHandler* dbh, std::string asse
     init(assets_path);
 }
 MenuState::~MenuState() {
-    // printf("MENU STATE destructor\n");
+    #if DEV_MODE == 1
+    log(0, "MenuState destroyed");
+    #endif
 }
 void MenuState::updateMousePos() {
    mousePos = sf::Mouse::getPosition(*getWindow());

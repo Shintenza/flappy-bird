@@ -7,7 +7,9 @@ Entity::Entity(sf::Texture* _texture, float _speed) {
     texture = _texture;
 }
 Entity::~Entity() {
-    std::cout<<"destroyed"<<std::endl;
+    #if DEV_MODE == 1
+    log(0, "entity destroyed");
+    #endif
 }
 sf::FloatRect Entity::getBounding() const  {
     return sprite.getGlobalBounds();

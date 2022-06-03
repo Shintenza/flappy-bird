@@ -12,6 +12,9 @@ MainMenu::MainMenu(std::string &assetsFolderPath, sf::Vector2u windowSize, sf::V
 MainMenu::~MainMenu() {
     std::for_each(buttons.begin(), buttons.end(), p_delete);
     buttons.clear();
+    #if DEV_MODE == 1
+    log(0, "MainMenu destructor");
+    #endif
 }
 
 void MainMenu::loadFonts(std::string& assetsFolderPath) {

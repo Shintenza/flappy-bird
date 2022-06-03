@@ -9,6 +9,7 @@
 
 #include "State.hpp"
 #include "DbHandler.hpp"
+#include "main.hpp"
 
 class Game {
 private:

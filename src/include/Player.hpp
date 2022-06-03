@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Entity.hpp"
+#include "main.hpp"
 
 class Player : public Entity { 
 private:

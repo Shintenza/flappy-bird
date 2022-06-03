@@ -1,6 +1,7 @@
 #pragma once
 #include "utils/logging.hpp"
 #include "DbHandler.hpp"
+#include "main.hpp"
 
 #include <SFML/Graphics.hpp>
 
