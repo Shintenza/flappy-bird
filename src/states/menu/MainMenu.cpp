@@ -4,7 +4,8 @@
 void p_delete(Button *p) {
     delete p;
 }
-MainMenu::MainMenu(std::string &assetsFolderPath, sf::Vector2u windowSize, sf::Vector2f& _mousePosView) :
+MainMenu::MainMenu(std::string &assetsFolderPath, sf::Vector2u windowSize, sf::Vector2f& _mousePosView, StatsMenu& _statsMenu) :
+    statsMenu(_statsMenu),
     mousePosView(_mousePosView) {
     init(assetsFolderPath, windowSize);
 }
@@ -68,6 +69,7 @@ void MainMenu::handleInput(sf::Vector2f mousePosView, bool& isStatScreenActive, 
                 isGameStarted = true;
             }
             if (*buttons[2] && !isStatScreenActive) {
+                statsMenu.fetchData();
                 isStatScreenActive = true;
             }
         }

@@ -121,6 +121,9 @@ void DbHandler::addSession(int started,int score, int tries, int flap_count, int
 std::vector<bestScore> DbHandler::getBestScores() {
     int rc;
     std::string sql = "SELECT * FROM game ORDER BY best_score DESC LIMIT 5";
+    if (!bestScores.empty()) {
+        bestScores.clear();
+    }
     rc = sqlite3_exec(db, sql.c_str(), getBestScoresCallback, this, 0);
     if (rc !=SQLITE_OK) {
         std::string dbErrorMsg = sqlite3_errmsg(db);

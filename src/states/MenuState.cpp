@@ -8,8 +8,8 @@
 
 MenuState::MenuState(sf::RenderWindow* _window, DbHandler* dbh, std::string assets_path, bool& started) : 
     State(_window, dbh, "MenuState"),
-    main(assets_path, getWindow()->getSize(), mousePosView),
     stats(assets_path, getWindow()->getSize(), dbh, isStatScreenActive, mousePosView),
+    main(assets_path, getWindow()->getSize(), mousePosView, stats),
     isGameStarted(started)
 {
     init(assets_path);
@@ -46,8 +46,8 @@ void MenuState::update(const float& dt) {
     updateMousePos();
     handleInput(dt);
 
-    stats.handleInput(mousePosView);
     main.handleInput(mousePosView, isStatScreenActive, isGameStarted);
+    stats.handleInput(mousePosView);
 
     if (main.getQuit()) {
         endState();

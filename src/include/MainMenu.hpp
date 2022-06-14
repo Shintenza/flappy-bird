@@ -4,12 +4,14 @@
 
 #include "Button.hpp"
 #include "main.hpp"
+#include "StatsMenu.hpp"
 
 class MainMenu {
 private:
     sf::Font font;
     sf::Text gameTitle;
 
+    StatsMenu& statsMenu;
     sf::Vector2f& mousePosView;
 
     sf::RectangleShape menuBox;
@@ -22,7 +24,7 @@ private:
     bool isHeld;
 
 public:
-    MainMenu(std::string &assetsFolderPath, sf::Vector2u windowSize, sf::Vector2f& mousePosView);
+    MainMenu(std::string &assetsFolderPath, sf::Vector2u windowSize, sf::Vector2f& mousePosView, StatsMenu& _statsMenu);
     ~MainMenu();
     void handleInput(sf::Vector2f mousePosView, bool& isStatScreenActive, bool& isGameStarted);
     bool getQuit();

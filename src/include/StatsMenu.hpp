@@ -15,8 +15,14 @@ private:
 
     sf::Vector2f& mousePos;
 
+    std::vector<bestScore> scores;
+    std::array<int, 2> secondaryStatsArray;
+
+    sf::Vector2u windowSize;
+
+
     void positionMenu(std::string& assetsFolderPath, sf::Vector2u windowSize);
-    
+
     Button *goBack;
     DbHandler* dbHandler;
     
@@ -28,6 +34,7 @@ private:
 public:
     StatsMenu(std::string& assetsPath, sf::Vector2u windowSize, DbHandler* dbHandler, bool& isStatScreenActive, sf::Vector2f& mousePos);
     ~StatsMenu();
+    void fetchData();
     bool isActive();
     void handleInput(sf::Vector2f mousePosView);
     void draw(sf::RenderTarget* target);

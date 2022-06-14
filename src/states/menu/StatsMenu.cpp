@@ -1,10 +1,11 @@
 #include "../../include/StatsMenu.hpp"
 
-StatsMenu::StatsMenu(std::string& assetsPath, sf::Vector2u windowSize, DbHandler* _dbHandler, bool& isStatScreenActive, sf::Vector2f& _mousePos) : 
+StatsMenu::StatsMenu(std::string& assetsPath, sf::Vector2u _windowSize, DbHandler* _dbHandler, bool& isStatScreenActive, sf::Vector2f& _mousePos) : 
     mousePos(_mousePos),
     active(isStatScreenActive) {
+    windowSize = _windowSize;
     dbHandler = _dbHandler;
-    init(assetsPath, windowSize);
+    init(assetsPath, _windowSize);
 }
 
 StatsMenu::~StatsMenu() {
@@ -25,8 +26,6 @@ void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) 
     sf::Vector2f buttonSize =sf::Vector2f(b_width, b_height);
     sf::Vector2f buttonPos = sf::Vector2f(windowSize.x *.5f - buttonSize.x*.5f, windowSize.y - 100);
 
-    std::array<int, 2> secondaryStatsArray = dbHandler->getSecondaryStats();
-    std::vector<bestScore> scores = dbHandler->getBestScores();
     
     goBack = new Button(mousePos, buttonSize, buttonPos, assetsPath, sf::Color::Cyan, "Back", 37, false);
 
@@ -42,6 +41,23 @@ void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) 
     
     bestScoresText.setFont(font);
     bestScoresText.setCharacterSize(19);
+
+
+    secondaryStatsHeader.setCharacterSize(28);
+    secondaryStatsHeader.setFont(font);
+    secondaryStatsHeader.setString("Secondary Stats:");
+
+    secondaryStats.setFont(font);
+    secondaryStats.setCharacterSize(19);
+}
+
+void StatsMenu::fetchData() {
+    secondaryStatsArray = dbHandler->getSecondaryStats();
+    if (!scores.empty()) {
+        scores.clear();
+    }
+    scores = dbHandler->getBestScores();
+
     std::string statsString = "";
     std::string secondaryStatsString;
 
@@ -59,20 +75,17 @@ void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) 
     bestScoresText.setString(statsString);
     bestScoresText.setPosition(windowSize.x*.5f - bestScoresText.getGlobalBounds().width*.5f, bestScoresHeader.getPosition().y + bestScoresHeader.getGlobalBounds().height + 30);
 
-    secondaryStatsHeader.setString("Secondary Stats:");
-    secondaryStatsHeader.setCharacterSize(28);
-    secondaryStatsHeader.setFont(font);
-    secondaryStatsHeader.setPosition(windowSize.x*.5f - secondaryStatsHeader.getGlobalBounds().width*.5f, bestScoresText.getPosition().y + bestScoresText.getGlobalBounds().height + 30);
-    
     if (secondaryStatsArray.empty()) {
         secondaryStatsString = "Nothing to display";
     }
     secondaryStatsString = "Flap Count: " + std::to_string(secondaryStatsArray[0]) + " Passed obstacles: " + std::to_string(secondaryStatsArray[1]);
+
+    secondaryStatsHeader.setPosition(windowSize.x*.5f - secondaryStatsHeader.getGlobalBounds().width*.5f, bestScoresText.getPosition().y + bestScoresText.getGlobalBounds().height + 30);
+    
     secondaryStats.setString(secondaryStatsString);
-    secondaryStats.setFont(font);
-    secondaryStats.setCharacterSize(19);
     secondaryStats.setPosition(windowSize.x*.5f - secondaryStats.getGlobalBounds().width*.5f, secondaryStatsHeader.getPosition().y + secondaryStatsHeader.getGlobalBounds().height + 30);
 }
+
 bool StatsMenu::isActive() {
     return active;
 }
