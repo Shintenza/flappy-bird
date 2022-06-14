@@ -12,6 +12,7 @@ struct Background {
     sf::Sprite groundSprite[2];
 };
 
+// Przykładowe użycie: dziedziczenie
 class GameState : public State {
 private:
     Player* player;

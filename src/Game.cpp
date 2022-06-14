@@ -4,12 +4,14 @@
 #include "include/MenuState.hpp"
 #include <iostream>
 
+// Przykładowe użycie: konstruktor
 Game::Game(int _argc, char **_argv) : argc(_argc), argv(_argv) {
     initVariables();
     initWindow();
     initState();
     getStartSessionDate();
 }
+// Przykładowe użycie: destruktor
 Game::~Game() {
     if (!states.empty()) {
         while (!states.empty()) {
@@ -91,6 +93,7 @@ void Game::update(){
 void Game::render(){
     window->clear();
 
+    // Przykładowe użycie: polimorfizm
     if (states.size() > 0) {
         states.top()->render(window);
     } else {

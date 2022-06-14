@@ -2,6 +2,7 @@
 #include <iostream>
 #include "out_decor.hpp"
 
+// Przykładowe użycie: własny szablon
 template <typename T> void log(int mode, T output) {
     std::string prefix;
     switch (mode) {

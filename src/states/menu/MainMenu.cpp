@@ -62,6 +62,7 @@ void MainMenu::handleInput(sf::Vector2f mousePosView, bool& isStatScreenActive, 
         if(!isHeld) {
             isHeld = true;
             //TODO just make it better pls
+            // Przykładowe użycie: przeciążanie operatorów
             if (*buttons[1] && !isStatScreenActive) {
                 quit = true;
             }
@@ -90,6 +91,7 @@ void MainMenu::init(std::string& assetsFolderPath, sf::Vector2u windowSize) {
 void MainMenu::draw(sf::RenderTarget* window) {
     window->draw(menuBox);
     window->draw(gameTitle);
+    // Przykładowe użycie: zakresowa pętla for
     for (Button* btn : buttons) {
         btn->draw(window);
     }

@@ -23,6 +23,7 @@ private:
     void setPlacement();
 public:
     Obstacle(sf::Texture* texture, sf::Vector2u _windowSize, float ground_h, float move_s);
+    // Deklaracja: konstruktor kopiujący
     Obstacle(const Obstacle& other);
     ~Obstacle();
 

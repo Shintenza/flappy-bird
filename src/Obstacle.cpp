@@ -10,6 +10,7 @@ Obstacle::Obstacle(sf::Texture* _texture, sf::Vector2u _windowSize, float ground
     texture = _texture;
     setSprite();
 }
+// Przykładowe użycie: konstruktor kopiujący
 Obstacle::Obstacle(const Obstacle& other) : Entity(other.texture, 40){
     groundHeight = other.groundHeight; 
     windowSize = other.windowSize;

@@ -23,9 +23,11 @@ private:
     int flapCount;
     int obstaclesCount;
 
+    // Przykładowe użycie: szablony
     std::vector<bestScore> bestScores;
     std::array<int, 2> secondaryStats;
 
+    // Przykładowe użycie: deklaracja przyjaciela 
     friend int getHighestScoreCallback(void *data, int argc, char** argv, char**colName);
     friend int getBestScoresCallback(void* data, int argc, char** argv, char** colName);
     friend int getSecondaryStatsCallback(void* data, int argc, char** argv, char** colName);

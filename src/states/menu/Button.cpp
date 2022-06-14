@@ -20,6 +20,7 @@ Button::~Button() {
     log(0, "button destructor");
     #endif
 }
+// Przykładowe użycie: przeciążanie operatorów
 Button::operator bool() const {
     if(button.getGlobalBounds().contains(mousePos)) {
         return true;

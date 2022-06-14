@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
+// Przykładowe użycie: klasa abstrakcyjna
 class State {
 private:
     sf::RenderWindow* window;
@@ -22,6 +23,7 @@ public:
     void loadTexture(std::string texture_name, std::string path);
     sf::RenderWindow* getWindow();
     sf::Texture* getTexture(std::string texture_name);
+    // Przykładowe użycie: czysto wirtualne metody
     virtual void handleInput(const float& dt) = 0;
     virtual void update(const float& dt) = 0;
     virtual void render(sf::RenderTarget* target) = 0;

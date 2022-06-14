@@ -11,6 +11,7 @@
 #include "DbHandler.hpp"
 #include "main.hpp"
 
+// Przykładowe użycie: klasa
 class Game {
 private:
     sf::VideoMode windowMode;
@@ -39,7 +40,9 @@ private:
     void initWindow();
 
 public:
+    // Deklaracja: konstruktor
     Game(int argc, char** argv);
+    // Deklaracja: destruktor
     ~Game();
     void updateDt();
     void updatePollEvenets();

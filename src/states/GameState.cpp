@@ -149,12 +149,16 @@ void GameState::restartGame() {
     numberOfTries++;
 }
 void GameState::updateLastScores(unsigned& score){
+    // Przykładowe użycie: algorytmy
+
     std::vector<unsigned>::iterator min = std::min_element(lastSessionScores.begin(), lastSessionScores.end());
     unsigned min_index = std::distance(lastSessionScores.begin(), min);
 
     if (lastSessionScores.size() < 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() && score > 0 ) {
         lastSessionScores.push_back(score);
-    } else if (lastSessionScores.size() >= 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() && score > lastSessionScores[min_index] && score > 0) {
+    } else if (lastSessionScores.size() >= 5 
+            && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() 
+            && score > lastSessionScores[min_index] && score > 0) {
         lastSessionScores.at(min_index) = score;
     }
 }
