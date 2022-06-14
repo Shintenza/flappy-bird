@@ -94,7 +94,7 @@ unsigned DbHandler::getDbHighestScore() {
 void DbHandler::addSession(int started,int score, int tries, int flap_count, int obstacles_count, bool update) {
     std::string sql; 
     int rc;
-    if (score == 0 || flapCount == 0) return;
+    if (score == 0 || flap_count == 0) return;
 
     if (update) {
         sql = "UPDATE game SET\
