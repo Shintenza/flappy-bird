@@ -33,14 +33,14 @@ void Game::initState () {
     states.push(new MenuState(window, dbHandler, getAssetsPath(), started));
 }
 void Game::initVariables() {
-    windowMode = sf::VideoMode(800,600);
+    windowMode = sf::VideoMode(650,690);
     dbHandler = new DbHandler();
     isOpen = true;
     started = false;
 }
 
 void Game::initWindow() {
-    window = new sf::RenderWindow(windowMode, "Flappy Bird");
+    window = new sf::RenderWindow(windowMode, "Flappy Bird", sf::Style::Titlebar | sf::Style::Resize);
     window->setFramerateLimit(60);
     window->setVerticalSyncEnabled(false);
 };
