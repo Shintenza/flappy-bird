@@ -235,7 +235,7 @@ sf::Text GameState::getScoreText() {
 }
 
 void GameState::handleInput(const float& dt) {  
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && gameEnded) {
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && (gameEnded || !sentStartingMessage)) {
         endState();
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {

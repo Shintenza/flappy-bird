@@ -31,7 +31,7 @@ void Button::init() {
     button.setSize(size);
     button.setFillColor(color);
     
-    text.setPosition(position.x + button.getGlobalBounds().width / 2  - text.getGlobalBounds().width / 2, position.y + button.getGlobalBounds().height / 2 - text.getGlobalBounds().height / 2 );
+    text.setPosition(position.x + button.getGlobalBounds().width / 2  - text.getGlobalBounds().width / 2, position.y + button.getGlobalBounds().height / 2 - text.getGlobalBounds().height );
 }
 
 void Button::loadFont() {

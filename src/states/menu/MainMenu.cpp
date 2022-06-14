@@ -32,7 +32,7 @@ void MainMenu::positionMenu(sf::Vector2u windowSize, std::string& assetsFolderPa
 
     menuBox.setSize(sf::Vector2f(width, height));
     menuBox.setPosition(windowSize.x *.5f - width *.5f, windowSize.y * .5f - height *.5f);
-    menuBox.setFillColor(sf::Color::Yellow);
+    menuBox.setFillColor(sf::Color(245, 241, 29));
     menuBoxPosition = menuBox.getPosition();
     
     gameTitle.setFont(font);
@@ -45,15 +45,15 @@ void MainMenu::positionMenu(sf::Vector2u windowSize, std::string& assetsFolderPa
     sf::Vector2f buttonSize = sf::Vector2f(width*.5f, height*.15f);
     sf::Vector2f startGamePos = sf::Vector2f(windowSize.x * 0.5f - buttonSize.x * 0.5f, gameTitle.getPosition().y + gameTitle.getGlobalBounds().height + 60);
 
-    buttons.push_back(new Button(mousePosView, buttonSize, startGamePos, assetsFolderPath, sf::Color::Blue, "Start", width*.09f, true));
+    buttons.push_back(new Button(mousePosView, buttonSize, startGamePos, assetsFolderPath, sf::Color(18, 255, 26), "Start", width*.09f, true));
 
     sf::Vector2f quitGamePos = sf::Vector2f(buttons.back()->getEndYPosition().x, buttons.back()->getEndYPosition().y + 40);
 
-    buttons.push_back(new Button(mousePosView, buttonSize, quitGamePos, assetsFolderPath, sf::Color::Red, "Quit", width*.09f, true));
+    buttons.push_back(new Button(mousePosView, buttonSize, quitGamePos, assetsFolderPath, sf::Color(252, 33, 18), "Quit", width*.09f, true));
     
     sf::Vector2f statsBtnPos = sf::Vector2f(buttons.back()->getEndYPosition().x, buttons.back()->getEndYPosition().y + 40);
 
-    buttons.push_back(new Button(mousePosView, buttonSize, statsBtnPos, assetsFolderPath, sf::Color::Blue, "Stats", width*.09f, true));
+    buttons.push_back(new Button(mousePosView, buttonSize, statsBtnPos, assetsFolderPath, sf::Color(30, 118, 250), "Stats", width*.09f, true));
 
 }
 
