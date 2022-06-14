@@ -1,12 +1,13 @@
 # pragma once
 #include "utils/logging.hpp"
+#include "main.hpp"
 #include <sqlite3.h>
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
 #include <array>
 
-struct bestScores {
+struct bestScore {
     int time;
     int score;
     int number_of_tries;
@@ -16,14 +17,28 @@ class DbHandler {
 private:
     sqlite3 *db;
     void initDb();
-    unsigned& highestScore;
+
+    int highestScore;
+    int numberOfTries;
+    int flapCount;
+    int obstaclesCount;
+
+    // Przykładowe użycie: szablony
+    std::vector<bestScore> bestScores;
+    std::array<int, 2> secondaryStats;
+
+    // Przykładowe użycie: deklaracja przyjaciela 
     friend int getHighestScoreCallback(void *data, int argc, char** argv, char**colName);
+    friend int getBestScoresCallback(void* data, int argc, char** argv, char** colName);
+    friend int getSecondaryStatsCallback(void* data, int argc, char** argv, char** colName);
+    friend int checkIfSessionsExistsCallback(void* data, int argc, char** argv, char** colName);
 public:
-    DbHandler(unsigned& highestScore);
+    DbHandler();
     ~DbHandler();
-    void getDbHighestScore();
-    void insertSession(int session_started, int n_of_tries, int flap_count, int obstacles_count);
-    void updateHighestScore(int score);
-    std::vector<bestScores> getBestScores();
+
+    bool checkIfSessionsExists(int started);
+    void addSession(int started, int score, int tries, int flap_count, int obstacles_count, bool update);
+    unsigned getDbHighestScore();
+    std::vector<bestScore> getBestScores();
     std::array<int, 2> getSecondaryStats();
 };

@@ -1,23 +1,34 @@
 #include "../../include/StatsMenu.hpp"
 
-void StatsScreen::loadFonts(std::string& assetsFolderPath) {
+StatsMenu::StatsMenu(std::string& assetsPath, sf::Vector2u _windowSize, DbHandler* _dbHandler, bool& isStatScreenActive, sf::Vector2f& _mousePos) : 
+    mousePos(_mousePos),
+    active(isStatScreenActive) {
+    windowSize = _windowSize;
+    dbHandler = _dbHandler;
+    init(assetsPath, _windowSize);
+}
+
+StatsMenu::~StatsMenu() {
+    delete goBack;
+    #if DEV_MODE == 1
+    log(0, "StatsMenu destructor");
+    #endif
+}
+void StatsMenu::loadFonts(std::string& assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font2.ttf")) {
         log(2, "failed to load main font");
         exit(1); }
 }
-void StatsScreen::positionMenu(sf::Vector2u windowSize) {
+void StatsMenu::positionMenu( std::string& assetsPath, sf::Vector2u windowSize) {
     float b_height = windowSize.y*0.1f;
     float b_width = windowSize.x*0.3f;
 
-    buttonText.setFont(font);
-    buttonText.setString("Back");
-    goBackButton.setSize(sf::Vector2f(b_width, b_height));
-    goBackButton.setPosition(windowSize.x *.5f - goBackButton.getGlobalBounds().width*.5f, windowSize.y - 100);
-    goBackButton.setFillColor(sf::Color::Blue);
+    sf::Vector2f buttonSize =sf::Vector2f(b_width, b_height);
+    sf::Vector2f buttonPos = sf::Vector2f(windowSize.x *.5f - buttonSize.x*.5f, windowSize.y - 100);
 
-    buttonText.setPosition(windowSize.x *.5f - buttonText.getGlobalBounds().width *.5f, 
-            goBackButton.getPosition().y + goBackButton.getGlobalBounds().height *0.5f - buttonText.getGlobalBounds().height*0.5f);
-            
+    
+    goBack = new Button(mousePos, buttonSize, buttonPos, assetsPath, sf::Color::Cyan, "Back", 37, false);
+
     header.setFont(font);
     header.setString("Game stats");
     header.setCharacterSize(37);
@@ -30,12 +41,30 @@ void StatsScreen::positionMenu(sf::Vector2u windowSize) {
     
     bestScoresText.setFont(font);
     bestScoresText.setCharacterSize(19);
+
+
+    secondaryStatsHeader.setCharacterSize(28);
+    secondaryStatsHeader.setFont(font);
+    secondaryStatsHeader.setString("Secondary Stats:");
+
+    secondaryStats.setFont(font);
+    secondaryStats.setCharacterSize(19);
+}
+
+void StatsMenu::fetchData() {
+    secondaryStatsArray = dbHandler->getSecondaryStats();
+    if (!scores.empty()) {
+        scores.clear();
+    }
+    scores = dbHandler->getBestScores();
+
     std::string statsString = "";
+    std::string secondaryStatsString;
 
     if (scores.empty()) {
         statsString = "Nothing to display";
     } else {
-        for (auto score : scores) {
+        for (bestScore score : scores) {
             std::time_t time = score.time;
             struct std::tm* tm = std::localtime(&time);
             char date[20];
@@ -45,19 +74,26 @@ void StatsScreen::positionMenu(sf::Vector2u windowSize) {
     }
     bestScoresText.setString(statsString);
     bestScoresText.setPosition(windowSize.x*.5f - bestScoresText.getGlobalBounds().width*.5f, bestScoresHeader.getPosition().y + bestScoresHeader.getGlobalBounds().height + 30);
-     
+
+    if (secondaryStatsArray.empty()) {
+        secondaryStatsString = "Nothing to display";
+    }
+    secondaryStatsString = "Flap Count: " + std::to_string(secondaryStatsArray[0]) + " Passed obstacles: " + std::to_string(secondaryStatsArray[1]);
+
+    secondaryStatsHeader.setPosition(windowSize.x*.5f - secondaryStatsHeader.getGlobalBounds().width*.5f, bestScoresText.getPosition().y + bestScoresText.getGlobalBounds().height + 30);
+    
+    secondaryStats.setString(secondaryStatsString);
+    secondaryStats.setPosition(windowSize.x*.5f - secondaryStats.getGlobalBounds().width*.5f, secondaryStatsHeader.getPosition().y + secondaryStatsHeader.getGlobalBounds().height + 30);
 }
-StatsScreen::StatsScreen(std::vector<bestScores> given_scores, bool& isStatScreenActive) : active(isStatScreenActive) {
-    scores = given_scores;
-}
-bool StatsScreen::isActive() {
+
+bool StatsMenu::isActive() {
     return active;
 }
-void StatsScreen::handleInput(sf::Vector2f mousePosView)  {
+void StatsMenu::handleInput(sf::Vector2f mousePosView)  {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
         if(!isHeld) {
             isHeld = true;
-            if (goBackButton.getGlobalBounds().contains(mousePosView) && active) {
+            if (*goBack && active) {
                 active = false;
             }
         }
@@ -65,15 +101,16 @@ void StatsScreen::handleInput(sf::Vector2f mousePosView)  {
         isHeld = false;
     }
 }
-void StatsScreen::init(std::string& assetsFolderPath, sf::Vector2u windowSize) {
+void StatsMenu::init(std::string& assetsPath, sf::Vector2u windowSize) {
     active = false;
-    loadFonts(assetsFolderPath);
-    positionMenu(windowSize);
+    loadFonts(assetsPath);
+    positionMenu(assetsPath, windowSize);
 }
-void StatsScreen::draw(sf::RenderTarget* window) {
+void StatsMenu::draw(sf::RenderTarget* window) {
     window->draw(header);
     window->draw(bestScoresHeader);
     window->draw(bestScoresText);
-    window->draw(goBackButton);
-    window->draw(buttonText);
+    window->draw(secondaryStatsHeader);
+    window->draw(secondaryStats);
+    goBack->draw(window);
 }

@@ -1,32 +1,31 @@
 #include "include/Player.hpp"
+#include "include/utils/logging.hpp"
 #include <iostream>
 #include <cmath>
 
-Player::Player(sf::Texture *texture, sf::Vector2u _windowSize, unsigned& flap_count) : Entity(40), flapCount(flap_count) {
+Player::Player(sf::Texture *_texture, sf::Vector2u _windowSize, unsigned& flap_count) : Entity(_texture, 40), flapCount(flap_count) {
     windowSize = _windowSize;
-    setSprite(texture);
+    setSprite();
     flapHeight = 70.f;
     isFalling = false;
+    isFlying = false;
     angle = 0;
 
-    unsigned xPos = 0.3 * windowSize.x - (sprite.getGlobalBounds().width / 2);
-    unsigned yPos = 0.5 * windowSize.y - (sprite.getGlobalBounds().height / 2);
-    sprite.setPosition(xPos, yPos);
+    startX = 0.3 * windowSize.x - (sprite.getGlobalBounds().width / 2);
+    startY = 0.5 * windowSize.y - (sprite.getGlobalBounds().height / 2);
+    sprite.setPosition(startX, startY);
 
     size.x = sprite.getGlobalBounds().width;
     size.y = sprite.getGlobalBounds().height;
+
+    hitbox.setSize(size);
 }
 
 Player::~Player() {
-    std::cout<<"Player deleted"<<std::endl;
+    #if DEV_MODE == 1
+    log(0, "player deleted");
+    #endif
 }
-
-void Player::hitboxHandler() {
-    hitbox.setSize(size);
-    hitbox.setPosition(sprite.getPosition().x, sprite.getPosition().y);
-    hitbox.setFillColor(sf::Color::Blue);
-}
-
 
 void Player::move(float x, float y) {
     velocity.x+= x;
@@ -34,13 +33,15 @@ void Player::move(float x, float y) {
 }
 void Player::startFalling() {
     isFalling = true;
+    isFlying = true;
+    angle = 0;
 }
-void Player::stopFalling() {
+void Player::stopFalling(const float& dt) {
     isFalling = false;
     velocity.x = -400;
 }
 void Player::fall(const float& dt) {
-    if (isFalling) {
+    if (isFalling || isFlying) {
         velocity.y += 981.f *dt;
     }
 }
@@ -72,16 +73,15 @@ void Player::flap(const float& dt) {
     }
 }
 void Player::restartPlayer() {
-    unsigned xPos = 0.3 * windowSize.x - (sprite.getGlobalBounds().width / 2);
-    unsigned yPos = 0.5 * windowSize.y - (sprite.getGlobalBounds().height / 2);
-    sprite.setPosition(xPos, yPos);
+    sprite.setPosition(startX, startY);
     velocity = sf::Vector2f(0, 0);
     isFalling = false;
+    isFlying = false;
     isDead = false;
     sprite.setRotation(0);
     angle = 0;
 }
-void Player::setSprite(sf::Texture *texture) {
+void Player::setSprite() {
     sprite.setTexture(*texture);
     sprite.setScale(0.1f, 0.1f);
 }
@@ -92,12 +92,21 @@ void Player::update(const float& dt) {
     if (sprite.getPosition().y < 0) {
         velocity.y = 50;
     }
+    if (!isFlying && !isFalling ) {
+        float range = sprite.getGlobalBounds().width * .3f;
+        if ((sprite.getPosition().y >= startY - range && std::abs(sprite.getPosition().y - startY) < range) || sprite.getPosition().y < startY - range) {
+            velocity.y+=981.f/4 * dt;
+        } else {
+            velocity.y-=981.f/4 * dt;
+        }
+
+    }
     sprite.move(velocity*dt);
-    sprite.setRotation(angle);
+    if (isFalling) {
+        sprite.setRotation(angle);
+    }
     
-
-    hitboxHandler();
-
+    hitbox.setPosition(sprite.getPosition().x, sprite.getPosition().y);
     
     if (velocity.y > 0) {
         float rotation = sprite.getRotation() > 180 ? sprite.getRotation() - 360.f : sprite.getRotation();

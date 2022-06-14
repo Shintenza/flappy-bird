@@ -1,13 +1,30 @@
 #include "../../include/MainMenu.hpp"
 #include "../../include/utils/logging.hpp"
 
+void p_delete(Button *p) {
+    delete p;
+}
+MainMenu::MainMenu(std::string &assetsFolderPath, sf::Vector2u windowSize, sf::Vector2f& _mousePosView, StatsMenu& _statsMenu) :
+    statsMenu(_statsMenu),
+    mousePosView(_mousePosView) {
+    init(assetsFolderPath, windowSize);
+}
+
+MainMenu::~MainMenu() {
+    std::for_each(buttons.begin(), buttons.end(), p_delete);
+    buttons.clear();
+    #if DEV_MODE == 1
+    log(0, "MainMenu destructor");
+    #endif
+}
+
 void MainMenu::loadFonts(std::string& assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font1.ttf")) {
         log(2, "failed to load main font");
         exit(1);
     }
 }
-void MainMenu::positionMenu(sf::Vector2u windowSize) {
+void MainMenu::positionMenu(sf::Vector2u windowSize, std::string& assetsFolderPath) {
     sf::Vector2f menuBoxPosition;
     float height = windowSize.y*0.7f;
     float width = windowSize.x*0.7f;
@@ -15,7 +32,7 @@ void MainMenu::positionMenu(sf::Vector2u windowSize) {
 
     menuBox.setSize(sf::Vector2f(width, height));
     menuBox.setPosition(windowSize.x *.5f - width *.5f, windowSize.y * .5f - height *.5f);
-    menuBox.setFillColor(sf::Color::Yellow);
+    menuBox.setFillColor(sf::Color(245, 241, 29));
     menuBoxPosition = menuBox.getPosition();
     
     gameTitle.setFont(font);
@@ -25,45 +42,18 @@ void MainMenu::positionMenu(sf::Vector2u windowSize) {
     gameTitle.setOutlineThickness(2);
     gameTitle.setOutlineColor(sf::Color::Black);
 
-    startGameButton.setSize(sf::Vector2f(width*.5f, height*.15f));
-    startGameButton.setFillColor(sf::Color::Blue);
-    startGameButton.setPosition(windowSize.x * 0.5f - startGameButton.getGlobalBounds().width * 0.5f, 
-        gameTitle.getPosition().y + gameTitle.getGlobalBounds().height + 60);
+    sf::Vector2f buttonSize = sf::Vector2f(width*.5f, height*.15f);
+    sf::Vector2f startGamePos = sf::Vector2f(windowSize.x * 0.5f - buttonSize.x * 0.5f, gameTitle.getPosition().y + gameTitle.getGlobalBounds().height + 60);
 
-    quitGameButton.setSize(sf::Vector2f(width*.5f, height*.15f));
-    quitGameButton.setFillColor(sf::Color::Red);
-    quitGameButton.setPosition(windowSize.x * 0.5f - quitGameButton.getGlobalBounds().width * 0.5f , startGameButton.getPosition().y + startGameButton.getSize().y + 40);
+    buttons.push_back(new Button(mousePosView, buttonSize, startGamePos, assetsFolderPath, sf::Color(18, 255, 26), "Start", width*.09f, true));
 
-    startGameText.setString("Start");
-    startGameText.setCharacterSize(width*0.09f);
-    startGameText.setOutlineColor(sf::Color::Black);
-    startGameText.setOutlineThickness(2);
-    startGameText.setFont(font);
+    sf::Vector2f quitGamePos = sf::Vector2f(buttons.back()->getEndYPosition().x, buttons.back()->getEndYPosition().y + 40);
 
-    quitGameText.setString("Quit");
-    quitGameText.setCharacterSize(width*0.09f);
-    quitGameText.setOutlineColor(sf::Color::Black);
-    quitGameText.setOutlineThickness(2);
-    quitGameText.setFont(font);
-
-    startGameText.setPosition(windowSize.x *.5f - startGameText.getGlobalBounds().width *.5f, 
-    startGameButton.getPosition().y + startGameButton.getSize().y *.5f - startGameText.getGlobalBounds().height);
+    buttons.push_back(new Button(mousePosView, buttonSize, quitGamePos, assetsFolderPath, sf::Color(252, 33, 18), "Quit", width*.09f, true));
     
-    quitGameText.setPosition(windowSize.x *.5f - quitGameText.getGlobalBounds().width *.5f, 
-        quitGameButton.getPosition().y + quitGameButton.getSize().y *.5f - quitGameText.getGlobalBounds().height);
+    sf::Vector2f statsBtnPos = sf::Vector2f(buttons.back()->getEndYPosition().x, buttons.back()->getEndYPosition().y + 40);
 
-    checkStatsButton.setSize(sf::Vector2f(width*.5f, height*.15f));
-    checkStatsButton.setFillColor(sf::Color::Cyan);
-    checkStatsButton.setPosition(windowSize.x * 0.5f - checkStatsButton.getGlobalBounds().width * 0.5f , quitGameButton.getPosition().y + quitGameButton.getSize().y + 40);
-
-    checkStatsText.setFont(font);
-    checkStatsText.setString("Stats");
-    checkStatsText.setOutlineColor(sf::Color::Black);
-    checkStatsText.setOutlineThickness(2);
-    checkStatsText.setCharacterSize(width*0.09f);
-
-    checkStatsText.setPosition(windowSize.x *.5f - checkStatsText.getGlobalBounds().width *.5f, 
-        checkStatsButton.getPosition().y + checkStatsButton.getSize().y *.5f - checkStatsText.getGlobalBounds().height);
+    buttons.push_back(new Button(mousePosView, buttonSize, statsBtnPos, assetsFolderPath, sf::Color(30, 118, 250), "Stats", width*.09f, true));
 
 }
 
@@ -71,13 +61,16 @@ void MainMenu::handleInput(sf::Vector2f mousePosView, bool& isStatScreenActive, 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
         if(!isHeld) {
             isHeld = true;
-            if (quitGameButton.getGlobalBounds().contains(mousePosView) && !isStatScreenActive) {
+            //TODO just make it better pls
+            // Przykładowe użycie: przeciążanie operatorów
+            if (*buttons[1] && !isStatScreenActive) {
                 quit = true;
             }
-            if (startGameButton.getGlobalBounds().contains(mousePosView) && !isStatScreenActive) {
+            if (*buttons[0] && !isStatScreenActive) {
                 isGameStarted = true;
             }
-            if (checkStatsButton.getGlobalBounds().contains(mousePosView) && !isStatScreenActive) {
+            if (*buttons[2] && !isStatScreenActive) {
+                statsMenu.fetchData();
                 isStatScreenActive = true;
             }
         }
@@ -90,7 +83,7 @@ bool MainMenu::getQuit() {
 }
 void MainMenu::init(std::string& assetsFolderPath, sf::Vector2u windowSize) {
     loadFonts(assetsFolderPath);
-    positionMenu(windowSize);
+    positionMenu(windowSize, assetsFolderPath);
     quit = false;
     isHeld = false;
 }
@@ -98,10 +91,8 @@ void MainMenu::init(std::string& assetsFolderPath, sf::Vector2u windowSize) {
 void MainMenu::draw(sf::RenderTarget* window) {
     window->draw(menuBox);
     window->draw(gameTitle);
-    window->draw(startGameButton);
-    window->draw(quitGameButton);
-    window->draw(startGameText);
-    window->draw(quitGameText);
-    window->draw(checkStatsButton);
-    window->draw(checkStatsText);
+    // Przykładowe użycie: zakresowa pętla for
+    for (Button* btn : buttons) {
+        btn->draw(window);
+    }
 }

@@ -9,14 +9,16 @@
 
 #include "State.hpp"
 #include "DbHandler.hpp"
+#include "main.hpp"
 
+// Przykładowe użycie: klasa
 class Game {
 private:
     sf::VideoMode windowMode;
     sf::RenderWindow* window;
     sf::Event event;
 
-    std::time_t session_start;
+    int session_start;
 
     DbHandler *dbHandler;
 
@@ -29,11 +31,6 @@ private:
     sf::Clock dtClock;
     float dt;
 
-    unsigned highestScore;
-    unsigned numberOfTries;
-    unsigned flapCount;
-    unsigned obstaclesCount;
-
     bool isOpen;
     bool started;
     
@@ -43,7 +40,9 @@ private:
     void initWindow();
 
 public:
+    // Deklaracja: konstruktor
     Game(int argc, char** argv);
+    // Deklaracja: destruktor
     ~Game();
     void updateDt();
     void updatePollEvenets();

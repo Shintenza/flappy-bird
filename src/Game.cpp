@@ -4,19 +4,26 @@
 #include "include/MenuState.hpp"
 #include <iostream>
 
+// Przykładowe użycie: konstruktor
 Game::Game(int _argc, char **_argv) : argc(_argc), argv(_argv) {
-    dbHandler = new DbHandler(highestScore);
-
     initVariables();
     initWindow();
     initState();
     getStartSessionDate();
 }
+// Przykładowe użycie: destruktor
 Game::~Game() {
-    dbHandler->insertSession(session_start, numberOfTries, flapCount, obstaclesCount);
-
+    if (!states.empty()) {
+        while (!states.empty()) {
+            delete states.top();
+            states.pop();
+        }
+    }
     delete window;
     delete dbHandler;
+    #if DEV_MODE==1
+    log(0, "game destroyed");
+    #endif
 }
 
 void Game::getStartSessionDate() {
@@ -27,11 +34,9 @@ void Game::initState () {
 }
 void Game::initVariables() {
     windowMode = sf::VideoMode(800,600);
+    dbHandler = new DbHandler();
     isOpen = true;
     started = false;
-    numberOfTries = 0;
-    flapCount = 0;
-    obstaclesCount = 0;
 }
 
 void Game::initWindow() {
@@ -74,10 +79,11 @@ void Game::update(){
     updatePollEvenets();
     if (started) {
         started = false;
-        states.push(new GameState(window, dbHandler, getAssetsPath(), highestScore, numberOfTries, flapCount, obstaclesCount));
+        states.push(new GameState(window, dbHandler, getAssetsPath(), session_start));
     }
     if(states.size()>0) {
         if (!states.top()->getState()) {
+            delete states.top();
             states.pop();
         } else {
             states.top()->update(dt);
@@ -87,6 +93,7 @@ void Game::update(){
 void Game::render(){
     window->clear();
 
+    // Przykładowe użycie: polimorfizm
     if (states.size() > 0) {
         states.top()->render(window);
     } else {

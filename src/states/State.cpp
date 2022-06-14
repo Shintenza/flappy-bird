@@ -13,6 +13,7 @@ void State::loadTexture(std::string name, std::string _path) {
     textures.insert(std::pair<std::string, sf::Texture*>(name, texture));
 }
 State::~State() {
+    // Przykładowe użycie: iteratory
     std::map<std::string, sf::Texture*>::iterator iter;
     for (iter = textures.begin(); iter!= textures.end();iter++) {
         delete iter->second;
@@ -23,6 +24,7 @@ sf::RenderWindow* State::getWindow() {
     return window;
 }
 sf::Texture* State::getTexture(std::string name) {
+    // Przykładowe użycie: wyjątki
     try {
         if (textures.find(name)==textures.end()) {
             throw -1;
@@ -36,7 +38,9 @@ sf::Texture* State::getTexture(std::string name) {
 }
 void State::endState() {
     isActive = false;
+    #if DEV_MODE == 1
     log<std::string>(0, "state: " + stateName + " finished!");
+    #endif
 }
 bool State::getState() {
    return isActive ;

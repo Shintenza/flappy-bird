@@ -2,22 +2,39 @@
 #include "../include/utils/logging.hpp"
 #include <iostream>
 
-GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, 
-    unsigned& highest_score, unsigned& n_of_tires, unsigned& flap_count, unsigned& obstacle_count) 
-    : State(window, dbh, "GameState"), highestScore(highest_score), numberOfTries(n_of_tires), flapCount(flap_count), obstacleCount(obstacle_count)
+#define PLAYER_TEXTURE_NAME "bird"
+#define OBSTACLE_TEXTURE_NAME "column"
+
+GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string assetsFolderPath, int& sessionStarted)
+    : State(window, dbh, "GameState"), started(sessionStarted)
 {
-    loadTexture("PLAYER", assetsFolderPath+"bird.png");
+    loadTexture(PLAYER_TEXTURE_NAME, assetsFolderPath+PLAYER_TEXTURE_NAME".png");
+    loadTexture(OBSTACLE_TEXTURE_NAME, assetsFolderPath+OBSTACLE_TEXTURE_NAME".png");
 
-    sf::Texture *player_texture = getTexture("PLAYER");
-
-    player = new Player(player_texture, getWindow()->getSize(), flapCount);
-    loadTexture("OBSTACLE", assetsFolderPath+"column.png");
-    sf::Texture *obstacle_texture = getTexture("OBSTACLE");
+    sf::Texture *player_texture = getTexture(PLAYER_TEXTURE_NAME);
+    sf::Texture *obstacle_texture = getTexture(OBSTACLE_TEXTURE_NAME);
 
     if (!player_texture || !obstacle_texture) {
+        exit(1);
         std::cout<<"Player or obstacle texture not found"<<std::endl;
     }
 
+    player = new Player(player_texture, getWindow()->getSize(), flapCount);
+
+    initVars();
+    loadFonts(assetsFolderPath);
+    loadBackground(assetsFolderPath);
+    initCollisionBox();
+};
+
+GameState::~GameState() {
+    dbHandler->addSession(started, sessionHighestScore, numberOfTries, flapCount, obstacleCount, dbHandler->checkIfSessionsExists(started));
+    #if DEV_MODE == 1
+    log(0, "GameState destroyed, saved the session to the database");
+    #endif
+}
+
+void GameState::initVars() {
     isHeld = false;
     gameEnded = false;
     sentStartingMessage = false;;
@@ -25,14 +42,14 @@ GameState::GameState(sf::RenderWindow* window, DbHandler *dbh, std::string asset
     groundHeight = 75;
     backgroundMoveSpeed = 300.f;
     distance = 300.f;
+    
+    globalHighestScore = dbHandler->getDbHighestScore();
+    sessionHighestScore = 0;
     score = 0;
     numberOfTries = 1;
-
-
-    loadFonts(assetsFolderPath);
-    loadBackground(assetsFolderPath);
-    initCollisionBox();
-};
+    flapCount = 0;
+    obstacleCount = 0;
+}
 
 void GameState::loadFonts(std::string assetsFolderPath) {
     if (!font.loadFromFile(assetsFolderPath+"font1.ttf")) {
@@ -62,6 +79,7 @@ void GameState::loadBackground(std::string assetsFolderPath) {
     background.groundSprite[0].setPosition(0, getWindow()->getSize().y - groundHeight);
     background.groundSprite[1].setPosition(groundTexture.getSize().x, getWindow()->getSize().y - groundHeight);
 }
+
 void GameState::moveBackground(const float& dt) {
     int bgTextureSize = backgroundTexture.getSize().x;
     int grTextureSize = groundTexture.getSize().x;
@@ -98,7 +116,14 @@ void GameState::spawnObstacles() {
         readyToSpawnObstacle = true;
     }
     if (readyToSpawnObstacle) {
-        Obstacle *new_obstacle = new Obstacle(getTexture("OBSTACLE"), getWindow()->getSize(), groundHeight, backgroundMoveSpeed);
+        Obstacle *new_obstacle;
+
+        if (entities.empty()) {
+            new_obstacle = new Obstacle(getTexture(OBSTACLE_TEXTURE_NAME), getWindow()->getSize(), groundHeight, backgroundMoveSpeed);
+        } else {
+            new_obstacle = new Obstacle(*entities.back());
+        }
+
         entities.push_back(new_obstacle);
         readyToSpawnObstacle = false;
     }
@@ -124,12 +149,16 @@ void GameState::restartGame() {
     numberOfTries++;
 }
 void GameState::updateLastScores(unsigned& score){
-    std::vector<int>::iterator min = std::min_element(lastSessionScores.begin(), lastSessionScores.end());
-    int min_index = std::distance(lastSessionScores.begin(), min);
+    // Przykładowe użycie: algorytmy
 
-    if (lastSessionScores.size() < 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() ) {
+    std::vector<unsigned>::iterator min = std::min_element(lastSessionScores.begin(), lastSessionScores.end());
+    unsigned min_index = std::distance(lastSessionScores.begin(), min);
+
+    if (lastSessionScores.size() < 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() && score > 0 ) {
         lastSessionScores.push_back(score);
-    } else if (lastSessionScores.size() >= 5 && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end()) {
+    } else if (lastSessionScores.size() >= 5 
+            && std::find(lastSessionScores.begin(), lastSessionScores.end(), score) == lastSessionScores.end() 
+            && score > lastSessionScores[min_index] && score > 0) {
         lastSessionScores.at(min_index) = score;
     }
 }
@@ -152,7 +181,7 @@ sf::Text GameState::getBestScore () {
     s_text.setFont(font);
     s_text.setCharacterSize(21);
     xPos = 0.5f * getWindow()->getSize().x - (s_text.getGlobalBounds().width / 2);
-    s_text.setString("Global highest score: " + std::to_string(highestScore));
+    s_text.setString("Global highest score: " + std::to_string(globalHighestScore));
     s_text.setPosition(xPos, yPos);
 
     return s_text;
@@ -169,7 +198,7 @@ sf::Text GameState::getBestSessionScores() {
     xPos = 0.5f * getWindow()->getSize().x - (best_scores.getGlobalBounds().width / 2);
 
     if (lastSessionScores.size() > 0) {
-        for(std::vector<int>::reverse_iterator it = lastSessionScores.rbegin(); it != lastSessionScores.rend(); ++it) {
+        for(std::vector<unsigned>::reverse_iterator it = lastSessionScores.rbegin(); it != lastSessionScores.rend(); ++it) {
             if(it == (--lastSessionScores.rend())) {
                 returnStr+=" "+ std::to_string(*it);
             } else {
@@ -210,7 +239,7 @@ sf::Text GameState::getScoreText() {
 }
 
 void GameState::handleInput(const float& dt) {  
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && gameEnded) {
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && (gameEnded || !sentStartingMessage)) {
         endState();
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
@@ -239,8 +268,13 @@ void GameState::update(const float& dt) {
     if (player->checkIfDead(collision_box) && sentStartingMessage) {
         gameEnded = true;
         updateLastScores(score);
-        if (score > highestScore)
-            highestScore = score;
+
+        if (score > sessionHighestScore) 
+            sessionHighestScore = score;
+
+        if (sessionHighestScore > globalHighestScore)
+            globalHighestScore = sessionHighestScore;
+
     } else {
         player->update(dt);
     }
@@ -256,7 +290,7 @@ void GameState::update(const float& dt) {
 
     if (entities.size()>0) {
         if (entities.at(0)->isColliding(player->getHitboxBounding())){
-            player->stopFalling();
+            player->stopFalling(dt);
         }
     }
     setScore();

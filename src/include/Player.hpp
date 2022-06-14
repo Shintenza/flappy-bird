@@ -1,16 +1,18 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Entity.hpp"
+#include "main.hpp"
 
-class Player : public Entity{ 
+class Player : public Entity { 
 private:
     float flapHeight;
 
     bool isFalling;
-    void setSprite(sf::Texture* texturePtr);
+    bool isFlying;
     void fall(const float& dt);
     float angle;
-    bool isFlying;
+    float startX;
+    float startY;
 
     unsigned &flapCount;
 
@@ -20,6 +22,8 @@ private:
     sf::Vector2u windowSize;
     sf::Vector2f velocity;
     sf::Vector2f position;
+
+    void setSprite();
 public:
     float width;
     float height;
@@ -27,9 +31,8 @@ public:
     Player(sf::Texture *texture, sf::Vector2u _windowSize, unsigned& flap_count);
     ~Player();
 
-    void hitboxHandler();
     void startFalling();
-    void stopFalling();
+    void stopFalling(const float& dt);
     void move(float x, float y);
     void flap(const float& dt);
     void restartPlayer();

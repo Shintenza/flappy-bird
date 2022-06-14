@@ -1,7 +1,11 @@
+#pragma once
 #include "Entity.hpp"
+#include "main.hpp"
+#include "utils/logging.hpp"
 
 class Obstacle : public Entity{
 private:
+    sf::Texture* texture;
     sf::Sprite bottom_sprite;
     sf::Sprite top_sprite;
 
@@ -9,8 +13,7 @@ private:
     bool passed;
 
     float gapSize = 150;
-    float speed;
-    float ground_height;
+    float groundHeight;
     float moveSpeed;
 
     sf::Vector2u windowSize;
@@ -20,9 +23,11 @@ private:
     void setPlacement();
 public:
     Obstacle(sf::Texture* texture, sf::Vector2u _windowSize, float ground_h, float move_s);
+    // Deklaracja: konstruktor kopiujący
+    Obstacle(const Obstacle& other);
     ~Obstacle();
 
-    void setSprite(sf::Texture* texturePtr);
+    void setSprite();
     bool checkIfDead(sf::RectangleShape object);
     bool checkIfPassed() const;
     void pass();

@@ -2,16 +2,31 @@
 #include <iostream>
 #include <random>
 
-Obstacle::Obstacle(sf::Texture* texture, sf::Vector2u _windowSize, float ground_h, float move_s) : Entity(40) {
-    ground_height = ground_h;
-    windowSize = _windowSize;
-    moveSpeed = move_s;
+Obstacle::Obstacle(sf::Texture* _texture, sf::Vector2u _windowSize, float ground_h, float move_s) 
+    : Entity(_texture, 40), groundHeight(ground_h), moveSpeed(move_s),  windowSize(_windowSize)
+    {
     passed = false;
+    
+    texture = _texture;
+    setSprite();
+}
+// Przykładowe użycie: konstruktor kopiujący
+Obstacle::Obstacle(const Obstacle& other) : Entity(other.texture, 40){
+    groundHeight = other.groundHeight; 
+    windowSize = other.windowSize;
+    moveSpeed = other.moveSpeed;
+    passed = false;
+    texture = other.texture;
 
-    setSprite(texture);
+    bottom_sprite = other.bottom_sprite;
+    top_sprite = other.top_sprite;
+
+    setPlacement();
 }
 Obstacle::~Obstacle() {
-    /* printf("deadl\n"); */
+    #if DEV_MODE == 1
+    log(0, "obstacle destructor");
+    #endif
 }
 
 void Obstacle::move(const float& dt) {
@@ -28,7 +43,7 @@ void Obstacle::setPlacement() {
     top_sprite.setPosition(windowSize.x + (top_sprite.getGlobalBounds().width), yOffset);
     bottom_sprite.setPosition(windowSize.x, yOffset + gapSize);
 }
-void Obstacle::setSprite(sf::Texture* texture) {
+void Obstacle::setSprite() {
     bottom_sprite.setTexture(*texture, false);
     bottom_sprite.setScale(4.f, 5.f);
 
